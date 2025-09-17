@@ -269,8 +269,17 @@ collections:
   - name: collections/ansible_collections/myorg/toolchain/
     type: dir
   - name: collections/ansible_collections/myorg/publicapi/
-    type: dir
+    type: git
+    source: https://github.com/rstyczynski/ansible-collection-howto.git#/collections/ansible_collections/myorg/publicapi
+    version: 0.1.1
 ----
+
+
+[NOTE]
+====
+Note that Ansible supports wide range of sources for collections, including Git, URL, file directory, or subdirectories. Collection stored at git may be placed in a subdirectory of the repository, what may be beneficial is some cases, however for production like collections always use dedicated repository, what gives full control over the collection to the owner.
+====
+
 
 With `requirements.yml` ready, install the dependencies using the `ansible-galaxy` tool:
 

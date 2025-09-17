@@ -1,4 +1,3 @@
-# myorg.unix
+# Ansible Collection - myorg.unix
 
-Example Ansible Collection used in the tutorial. Contains the `apache` role.
-
+Documentation for the collection.
