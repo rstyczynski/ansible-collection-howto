@@ -1,6 +1,6 @@
 .vscode/
 .ansible
-venv/
+venv_*/
 state/
 documents/
 .DS_Store
