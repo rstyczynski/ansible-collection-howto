@@ -19,7 +19,7 @@ As major Ansible collections are public and distributed via Ansible Galaxy serve
 
 This document brings you from classic playbook, trough Ansible Role and finally to Ansible Collection, concluding with Ansible Role interface specification. The next step in the learning path will cover testing and Ansible fact persistence.
 
-Playbooks 'apache* take you trough step towards Ansible Collection and Molecule testing, 'duck*' set is a recap including argument specification; 'state*'' set of plays introduces fact persistence.
+Playbooks `apache*` take you trough step towards Ansible Collection and Molecule testing, `duck*` set is a recap including argument specification; `state*` set of plays introduces fact persistence.
 
 == Contents
 toc::[]
