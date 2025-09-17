@@ -1,0 +1,60 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Gather package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Assert Apache package is installed
+      ansible.builtin.assert:
+        that:
+          - "'apache2' in ansible_facts.packages or 'httpd' in ansible_facts.packages"
+        fail_msg: "Apache package not installed"
+        success_msg: "Apache package installed"
+
+    - name: Check Apache service state on Debian
+      ansible.builtin.service_facts:
+      when: ansible_os_family == "Debian"
+
+
+    - name: Assert apache2 service is running and enabled on Debian
+      ansible.builtin.assert:
+        that:
+          - "'apache2' in ansible_facts.services"
+          - ansible_facts.services['apache2'].state == 'running'
+        fail_msg: "apache2 service is not running on Debian"
+        success_msg: "apache2 service is running on Debian"
+      when: ansible_os_family == "Debian"
+
+    - name: Check Apache service state on RedHat
+      ansible.builtin.service_facts:
+      when: ansible_os_family == "RedHat"
+
+
+    - name: Assert httpd service is running and enabled on RedHat
+      ansible.builtin.assert:
+        that:
+          - "'httpd' in ansible_facts.services"
+          - ansible_facts.services['httpd'].state == 'running'
+        fail_msg: "httpd service is not running on RedHat"
+        success_msg: "httpd service is running on RedHat"
+      when: ansible_os_family == "RedHat"
+
+
+    - name: Check if port 80 is open (Apache)
+      ansible.builtin.wait_for:
+        port: 80
+        host: "{{ ansible_default_ipv4.address | default('127.0.0.1') }}"
+        state: started
+        timeout: 5
+      register: apache_port_check
+
+    - name: Assert port 80 is accessible
+      ansible.builtin.assert:
+        that:
+          - apache_port_check.state == "started"
+        fail_msg: "Port 80 is not accessible"
+        success_msg: "Port 80 is accessible"

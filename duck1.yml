@@ -1,0 +1,49 @@
+---
+# file: duck.yml
+- name: DuckDuckGo Instant Answer via Ansible
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    duckduckgo_query: "Alan Turing"
+
+  tasks:
+    - name: Call DuckDuckGo Instant Answer API
+      ansible.builtin.uri:
+        url: >-
+          https://api.duckduckgo.com/?q={{ duckduckgo_query | urlencode }}&format=json&no_html=1&no_redirect=1&skip_disambig=1
+        method: GET
+        return_content: true
+      register: ddg
+
+    - name: Normalize JSON payload
+      ansible.builtin.set_fact:
+        ddg_json: "{{ ddg.json | default(ddg.content | from_json) }}"
+
+    - name: Build final answer (Answer -> AbstractText -> top 3 RelatedTopics)
+      ansible.builtin.set_fact:
+        duck_answer: >-
+          {%- set ans = ddg_json.Answer | default('') -%}
+          {%- set abs = ddg_json.AbstractText | default('') -%}
+          {%- if ans | length > 0 -%}
+            {{ ans }}
+          {%- elif abs | length > 0 -%}
+            {{ abs }}
+          {%- else -%}
+            {# top-level RelatedTopics that have Text #}
+            {%- set top = (ddg_json.RelatedTopics | default([]) | selectattr('Text','defined') | map(attribute='Text') | list) -%}
+            {# nested RelatedTopics[].Topics[] that have Text #}
+            {%- set nested_objs = (ddg_json.RelatedTopics | default([]) | selectattr('Topics','defined') | map(attribute='Topics') | list) -%}
+            {%- set nested_flat = nested_objs | flatten -%}
+            {%- set nested_texts = nested_flat | selectattr('Text','defined') | map(attribute='Text') | list -%}
+            {%- set combined = (top + nested_texts) | select('string') | map('trim') | select('!=','') | unique | list -%}
+            {%- if combined | length > 0 -%}
+              {{ (combined[:3]) | join('\n') }}
+            {%- else -%}
+              No answer found
+            {%- endif -%}
+          {%- endif -%}
+
+    - name: Show result
+      ansible.builtin.debug:
+        msg: "{{ duck_answer }}"

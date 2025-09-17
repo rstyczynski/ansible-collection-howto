@@ -1,0 +1,5 @@
+- hosts: all          # or false if container user is root
+  gather_facts: true
+
+  roles:
+    - role: myorg.unix.apache

@@ -1,0 +1,9 @@
+---
+- name: Install and configure Apache on Debian systems
+  hosts: webservers
+  become: true
+  tasks:
+    - name: Install Apache
+      ansible.builtin.apt:
+        name: apache2
+        state: present

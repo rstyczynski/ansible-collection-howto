@@ -1,0 +1,29 @@
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - state_handler_namespace | length > 0
+      - state_handler_playbook | length > 0
+    fail_msg: "Both state_handler_namespace and state_handler_playbook must be set."
+
+- name: Combine namespace and playbook for state_writer role
+  ansible.builtin.set_fact:
+    state_writer_namespace: "{{ state_handler_namespace }}.{{ state_handler_playbook }}"
+
+- name: Find all state var files recursively
+  ansible.builtin.find:
+    paths: "{{ state_handler_root }}"
+    patterns: "{{ state_handler_patterns }}"
+    recurse: true
+    file_type: file
+  register: state_handler_files
+
+- name: Load all found state var files
+  ansible.builtin.include_vars:
+    file: "{{ item.path }}"
+  loop: "{{ state_handler_files.files | default([]) }}"
+  loop_control:
+    label: "{{ item.path | regex_replace('^.*/state/plays/', 'state/plays/') }}"
+
+- name: Set state_writer_items fact from state_handler_outputs
+  ansible.builtin.set_fact:
+    state_writer_items: "{{ state_handler_outputs }}"

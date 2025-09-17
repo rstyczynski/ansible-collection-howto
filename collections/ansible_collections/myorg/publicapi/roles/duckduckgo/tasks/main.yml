@@ -1,0 +1,81 @@
+---
+- name: Validate inputs (explicit)
+  ansible.builtin.validate_argument_spec:
+    argument_spec: "{{ lookup('file', role_path ~ '/meta/argument_specs.yml') | from_yaml }}"
+
+#
+# START OF ROLE TASKS
+#
+
+- name: Call DuckDuckGo Instant Answer API
+  uri:
+    url: >-
+      https://api.duckduckgo.com/?q={{ duckduckgo_query | urlencode }}&format=json&no_html=1&no_redirect=1&skip_disambig=1
+    method: GET
+    return_content: true
+  register: ddg
+
+- name: Normalize JSON payload
+  set_fact:
+    ddg_json: "{{ ddg.json | default(ddg.content | from_json) }}"
+
+- name: Build final answer (Answer -> AbstractText -> top 3 RelatedTopics)
+  set_fact:
+    duckduckgo_answer: >-
+      {%- set ans = ddg_json.Answer | default('') -%}
+      {%- set abs = ddg_json.AbstractText | default('') -%}
+      {%- if ans | length > 0 -%}
+        {{ ans }}
+      {%- elif abs | length > 0 -%}
+        {{ abs }}
+      {%- else -%}
+        {# top-level RelatedTopics that have Text #}
+        {%- set top = (ddg_json.RelatedTopics | default([]) | selectattr('Text','defined') | map(attribute='Text') | list) -%}
+        {# nested RelatedTopics[].Topics[] that have Text #}
+        {%- set nested_objs = (ddg_json.RelatedTopics | default([]) | selectattr('Topics','defined') | map(attribute='Topics') | list) -%}
+        {%- set nested_flat = nested_objs | flatten -%}
+        {%- set nested_texts = nested_flat | selectattr('Text','defined') | map(attribute='Text') | list -%}
+        {%- set combined = (top + nested_texts) | select('string') | map('trim') | select('!=','') | unique | list -%}
+        {%- if combined | length > 0 -%}
+          {{ (combined[:3]) | join('\n') }}
+        {%- else -%}
+          No answer found
+        {%- endif -%}
+      {%- endif -%}
+
+- name: Store role outputs as facts
+  ansible.builtin.set_fact:
+    myorg_publicapi_duckduckgo_outputs:
+      answer: "{{ duckduckgo_answer }}"
+      heading: "{{ ddg_json.Heading | default('') }}"
+      url: "{{ ddg_json.AbstractURL | default('') }}"
+      related_topics: "{{ (ddg_json.RelatedTopics | default([])) 
+                        | selectattr('Text','defined') 
+                        | map(attribute='Text') 
+                        | list }}"
+      query: "{{ duckduckgo_query }}"
+      status: "{{ ddg.status | default(0) }}"
+      raw: "{{ ddg_json }}"
+    # Do not store it in fact cache
+    #cacheable: true
+
+# - name: Show published outputs
+#   ansible.builtin.debug:
+#     var: duckduckgo_outputs
+
+- name: Show result
+  debug:
+    msg: "{{ duckduckgo_answer }}"
+
+#
+# END OF ROLE TASKS
+#
+
+# Persist role outputs if state_writer_namespace is defined and has a value
+- name: Persist role outputs
+  ansible.builtin.include_role:
+    name: myorg.toolchain.state_writer
+  vars:
+    state_handler_outputs:
+      - outputs: "{{ myorg_publicapi_duckduckgo_outputs }}"
+  when: state_writer_namespace is defined and state_writer_namespace | length > 0

@@ -1,0 +1,20 @@
+# Where to persist state
+state_writer_root: "{{ lookup('env', 'PWD') }}/state/plays"
+# state_writer_namespace is inherited from state_reader role
+state_writer_filename: "outputs.json"
+
+# Provide either:
+# 1) state_writer_payload (a ready dict), OR
+# 2) state_writer_items (list of dicts) which will be converted to a dict
+# Note: Keys in state_writer_items will have the namespace prefix automatically removed
+# Note: state_writer_items is typically set by state_handler from state_handler_outputs
+state_writer_payload: {}
+# e.g. [{outputs: "..."}] (prefix auto-removed)
+state_writer_items: []
+
+state_writer_dir_mode: "0755"
+state_writer_file_mode: "0644"
+
+state_writer_playbook: "{{ state_handler_outputs | default(ansible_play_name) }}"
+
+state_writer_outputs: "{{ state_handler_outputs | default([]) }}"

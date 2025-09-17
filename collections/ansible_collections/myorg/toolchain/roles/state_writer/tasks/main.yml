@@ -1,0 +1,65 @@
+- name: Require state_writer_namespace
+  ansible.builtin.assert:
+    that: state_writer_namespace | length > 0
+    fail_msg: "state_writer_namespace must be set (e.g., myorg.toolchain.duckduckgo)."
+
+- name: Compute namespace prefix and path
+  ansible.builtin.set_fact:
+    state_writer_namespace_prefix: "{{ state_writer_namespace | replace('.', '_') }}_"
+    state_writer_path: "{{ state_writer_namespace | replace('.', '/') }}"
+    state_writer_target_dir: "{{ state_writer_root }}/{{ state_writer_namespace | replace('.', '/') }}"
+
+- name: Ensure state directory exists
+  delegate_to: localhost
+  ansible.builtin.file:
+    path: "{{ state_writer_target_dir }}"
+    state: directory
+    mode: "{{ state_writer_dir_mode }}"
+
+- name: Initialize cleaned items list
+  ansible.builtin.set_fact:
+    _state_writer_outputs_cleaned: []
+  when: state_writer_outputs | length > 0
+
+- name: Add namespace prefix to keys in state_writer_outputs
+  ansible.builtin.set_fact:
+    _state_writer_outputs_cleaned: "{{ _state_writer_outputs_cleaned + [{state_writer_namespace_prefix + (item.keys() | first): item.values() | first}] }}"
+  loop: "{{ state_writer_outputs }}"
+  when: state_writer_outputs | length > 0
+
+- name: Build payload (prefer state_writer_payload; otherwise from cleaned state_writer_outputs)
+  ansible.builtin.set_fact:
+    _state_writer_payload: >-
+      {{
+        (state_writer_payload if (state_writer_payload | length) > 0
+         else (_state_writer_outputs_cleaned | combine if _state_writer_outputs_cleaned is defined
+               else {}))
+      }}
+
+- name: Add metadata fields (timestamp, hostname, SHA)
+  ansible.builtin.set_fact:
+    _state_writer_payload_with_metadata: >-
+      {{
+        _state_writer_payload | combine({
+            'timestamp': ansible_date_time.iso8601,
+            'hostname': ansible_hostname,
+            'inventory_hostname': inventory_hostname,
+            'ipaddress': (ansible_default_ipv4.address if (ansible_default_ipv4 is defined and ansible_default_ipv4.address is defined) else (ansible_all_ipv4_addresses | default([]) | first | default(''))),
+            'osname': ansible_distribution,
+            'osversion': ansible_distribution_version,
+            'ansible_version': ansible_version.full,
+            'ansible_play_name': ansible_play_name,
+            'controller_username': lookup('env', 'USER')
+        })
+      }}
+
+- name: Write payload JSON
+  delegate_to: localhost
+  ansible.builtin.copy:
+    dest: "{{ state_writer_target_dir }}/{{ state_writer_filename }}"
+    mode: "{{ state_writer_file_mode }}"
+    content: "{{ (_state_writer_payload_with_metadata | default({})) | to_nice_json }}"
+
+- name: Show destination path
+  ansible.builtin.debug:
+    msg: "Destination path: {{ state_writer_target_dir }}/{{ state_writer_filename }}"

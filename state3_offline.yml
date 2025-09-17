@@ -1,0 +1,42 @@
+---
+- name: Duck4
+  hosts: localhost
+  vars:
+    state_handler_namespace: myorg.tutorial
+
+  roles:
+    - role: myorg.toolchain.state_handler
+
+    - role: myorg.publicapi.duckduckgo
+      vars:
+        duckduckgo_query: "ZZ Top"
+      when: false # disable search. Result will be taken from state
+
+  tasks:
+    - name: Output duck answer from state facts
+      ansible.builtin.debug:
+        msg: "Duck answer (from state): {{ myorg_tutorial_Duck4_outputs.answer }}"
+      ignore_errors: true
+      tags:
+        - skip_ansible_lint
+
+    - name: Output duck answer from role facts
+      ansible.builtin.debug:
+        msg: "Duck answer (from facts): {{ myorg_publicapi_duckduckgo_outputs.answer }}"
+      ignore_errors: true
+      tags:
+        - skip_ansible_lint
+
+    - name: Output duck answer from localhost using state
+      ansible.builtin.debug:
+        msg: "Duck answer (from localhost facts): {{ hostvars['localhost'].myorg_tutorial_Duck4_outputs.answer }}"
+      ignore_errors: true
+      tags:
+        - skip_ansible_lint
+
+    - name: Output duck answer from localhost using role facts
+      ansible.builtin.debug:
+        msg: "Duck answer (from localhost facts): {{ hostvars['localhost'].myorg_publicapi_duckduckgo_outputs.answer }}"
+      ignore_errors: true
+      tags:
+        - skip_ansible_lint

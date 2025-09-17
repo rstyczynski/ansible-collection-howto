@@ -1,0 +1,7 @@
+---
+- name: Converge test
+  hosts: webservers
+  gather_facts: true
+
+  roles:
+    - role: myorg.unix.apache

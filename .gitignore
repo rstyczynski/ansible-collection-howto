@@ -1,0 +1,7 @@
+.vscode/
+.ansible
+venv/
+state/
+.DS_Store
+**/.DS_Store
+doc/

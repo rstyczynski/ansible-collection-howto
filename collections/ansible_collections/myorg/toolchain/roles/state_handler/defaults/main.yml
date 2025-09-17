@@ -1,0 +1,11 @@
+# lint-safe (role-prefixed) vars
+state_handler_root: "{{ lookup('env', 'PWD') }}/state/plays"
+# keep the same patterns you used in the playbook
+state_handler_patterns: "*.yml,*.yaml,*.json"
+# namespace and playbook for state operations (shared with state_writer)
+state_handler_namespace: ""            # e.g. "myorg.unix" (REQUIRED)
+state_handler_playbook: "{{ ansible_play_name }}"  # e.g. "duck3" (auto-set from playbook name)
+# outputs to be written by state_writer
+state_handler_outputs: []              # e.g. [{outputs: "..."}] (prefix auto-removed)
+# SHA verification settings
+state_handler_verify_sha: true         # Enable/disable SHA integrity verification

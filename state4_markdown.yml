@@ -1,0 +1,64 @@
+---
+- name: Convert Text to Markdown
+  hosts: localhost
+  gather_facts: false
+  vars:
+    state_handler_namespace: myorg.tutorial
+    markdown_output_file: "../documents/duck_says.md"
+    markdown_include_metadata: true
+
+  roles:
+    - role: myorg.toolchain.state_handler
+
+  tasks:
+    - name: Output text content from state facts
+      ansible.builtin.set_fact:
+        markdown_title: "{{ myorg_tutorial_Duck4_outputs.query }}"
+        input_text: "{{ myorg_tutorial_Duck4_outputs.answer }}"
+
+    - name: Generate Markdown content
+      ansible.builtin.set_fact:
+        markdown_content: |
+          # {{ markdown_title }}
+          
+          {{ input_text }}
+          
+          {% if markdown_include_metadata %}
+          ---
+          
+          **Generated:** {{ ansible_date_time.date }} at {{ ansible_date_time.time }}  
+          **Source:** Ansible Text to Markdown Converter  
+          **Host:** {{ inventory_hostname }}
+          {% endif %}
+        markdown_content: |
+          # {{ markdown_title }}
+          
+          {{ input_text }}
+          
+          {% if markdown_include_metadata %}
+          ---
+          
+          **Generated:** {{ ansible_date_time.date }} at {{ ansible_date_time.time }}  
+          **Source:** Ansible Text to Markdown Converter  
+          **Host:** {{ inventory_hostname }}
+          {% endif %}
+
+    - name: Write Markdown file
+      ansible.builtin.copy:
+        content: "{{ markdown_content }}"
+        dest: "{{ markdown_output_file }}"
+        mode: '0644'
+      register: markdown_file_result
+
+    - name: Display Markdown file information
+      ansible.builtin.debug:
+        msg: |
+          Markdown file created successfully!
+          File: {{ markdown_file_result.dest }}
+          Size: {{ markdown_file_result.size }} bytes
+          
+          You can view it in any Markdown viewer or convert it to other formats.
+
+    - name: Show Markdown content preview
+      ansible.builtin.debug:
+        msg: "{{ markdown_content | truncate(200) }}..."

@@ -1,0 +1,22 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+platforms:
+  - name: ubuntu
+    image: ubuntu:22.04
+    pre_build_image: false
+    dockerfile: Dockerfile
+    groups: [webservers]
+    
+provisioner:
+  name: ansible
+  playbooks:
+    converge: ../../apache2_debian.yml
+  inventory:
+    host_vars:
+      centos:
+        ansible_user: root
+verifier:
+  name: ansible

@@ -1,0 +1,9 @@
+---
+- name: Install and configure Apache on RedHat systems
+  hosts: webservers
+  become: true
+  tasks:
+    - name: Install Apache
+      ansible.builtin.yum:
+        name: httpd
+        state: present

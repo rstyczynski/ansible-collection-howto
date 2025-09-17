@@ -1,0 +1,31 @@
+---
+- name: install apache2
+  ansible.builtin.apt:
+    name: apache2
+    update_cache: yes
+    state: latest
+  become: true
+  when: ansible_os_family == "Debian"
+
+- name: install httpd
+  ansible.builtin.dnf:
+    name: httpd
+    state: latest
+  become: true
+  when: ansible_os_family == "RedHat"
+
+- name: Enable & start Apache on Debian
+  ansible.builtin.service:
+    name: apache2
+    state: started
+    enabled: true
+  become: true
+  when: ansible_os_family == "Debian"
+
+- name: Enable & start Apache on Redhat
+  ansible.builtin.service:
+    name: httpd
+    enabled: true
+    state: started
+  become: true
+  when: ansible_os_family == "RedHat"

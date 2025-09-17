@@ -1,0 +1,4 @@
+---
+- name: Write state after loading
+  ansible.builtin.import_role:
+    name: myorg.toolchain.state_writer

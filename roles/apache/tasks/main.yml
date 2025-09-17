@@ -1,0 +1,12 @@
+---
+- name: Install Apache on RedHat
+  ansible.builtin.yum:
+    name: httpd
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Install Apache on Debian
+  ansible.builtin.apt:
+    name: apache2
+    state: present
+  when: ansible_os_family == "Debian"

@@ -1,0 +1,30 @@
+---
+- name: Duck3
+  hosts: localhost
+
+  roles:
+    - role: myorg.toolchain.state_handler
+      vars:
+        state_handler_namespace: myorg.tutorial
+
+    - role: myorg.publicapi.duckduckgo
+      vars:
+        duckduckgo_query: "Jack Tramiel"
+
+    - role: myorg.toolchain.state_writer
+      vars:
+        state_handler_outputs:
+          - outputs: "{{ myorg_publicapi_duckduckgo_outputs }}"
+
+  tasks:
+    - name: Output duck answer from facts
+      ansible.builtin.debug:
+        msg: "Duck answer (from facts): {{ myorg_publicapi_duckduckgo_outputs.answer }}"
+
+    - name: Output duck answer from localhost using hostvars
+      ansible.builtin.debug:
+        msg: "Duck answer (from localhost facts): {{ hostvars['localhost'].myorg_publicapi_duckduckgo_outputs.answer }}"
+
+    - name: Output duck answer from localhost using groupvars
+      ansible.builtin.debug:
+        msg: "Duck answer (from groupvars): {{ myorg_publicapi_duckduckgo_outputs.answer }}"

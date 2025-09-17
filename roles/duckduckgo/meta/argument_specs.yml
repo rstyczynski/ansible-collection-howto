@@ -1,0 +1,25 @@
+argument_specs:
+  main:
+    short_description: "Query DuckDuckGo"
+    options:
+      duckduckgo_query:
+        type: str
+        description: The search query to send to DuckDuckGo Instant Answer API
+        required: true
+
+  main_outputs:
+    short_description: "Outputs schema (documentation-only)"
+    options:
+      duckduckgo_outputs:
+        type: dict
+        description: "Role outputs published by set_fact"
+        options:
+          answer:
+            type: str
+            description: "Short abstract text"
+          heading:
+            type: str
+            description: "Title returned by the API"
+          url:
+            type: str
+            description: "Reference URL"

@@ -1,0 +1,39 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+platforms:
+  - name: centos
+    image: quay.io/centos/centos:stream9
+    pre_build_image: false
+    dockerfile: Dockerfile.centos
+    cgroupns_mode: host
+    command: ["/usr/sbin/init"]
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    tmpfs:
+      /run: rw
+      /run/lock: rw
+    env:
+      container: docker
+    groups: [webservers]
+
+  - name: ubuntu
+    image: ubuntu:22.04
+    pre_build_image: false
+    dockerfile: Dockerfile.ubuntu
+    groups: [webservers]
+
+provisioner:
+  name: ansible
+  playbooks:
+    converge: ../../apache3_multi_os.yml
+  inventory:
+    host_vars:
+      centos:
+        ansible_user: root
+      ubuntu:
+        ansible_user: root
+verifier:
+  name: ansible

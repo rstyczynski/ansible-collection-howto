@@ -1,0 +1,10 @@
+---
+- name: DuckDuckGo Instant Answer via Ansible (using collection)
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    duckduckgo_query: "Michael Jackson"
+
+  roles:
+    - role: myorg.publicapi.duckduckgo
