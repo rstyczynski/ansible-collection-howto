@@ -2,6 +2,7 @@
 .ansible
 venv/
 state/
+_documents/
 .DS_Store
 **/.DS_Store
 doc/
