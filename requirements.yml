@@ -7,4 +7,4 @@ collections:
   - name: collections/ansible_collections/myorg/publicapi/
     type: git
     source: https://github.com/rstyczynski/ansible-collection-howto.git#/collections/ansible_collections/myorg/publicapi
-    version: main
+    version: 0.1.1
