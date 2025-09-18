@@ -10,18 +10,19 @@
 = Introduction to Ansible Collection
 {author}, v{revnumber} {revremark}, {revdate}
 
+Ansible is a very rich framework with many flavors and usage patterns. While it can be applied in different ways, the technology is built on several pillars that should guide its use. Among these, one is particularly important for complex organizations: the Ansible Collection.
 
-Ansible collections are a distribution format for Ansible content, including roles, modules, plugins, test code, and documentation. They make it easy to package, share, and reuse automation across projects and teams.
+Collections provide a foundational element for Ansible code management, enabling separation of concerns, controlled distribution, and versioning. This makes them essential for scaling practices, maintaining consistency, and ensuring traceability across teams and environments.
+
+Ansible Collections are a distribution format for Ansible content, including roles, modules, plugins, test code, and documentation. They make it easy to package, share, and reuse automation across projects and teams.
 
 This introduction shows how to create collections, maintain them in local directories or private GitHub repositories, and use them in playbooks.
 
-As major Ansible collections are public and distributed via Ansible Galaxy servers, what typically is a problem in enterprise environments, this document demonstrates how to install them from a local directories and repository i.e. local sources. This approach avoids relying on public sources and ensures full control over external dependencies.
+As most major Ansible Collections are public and distributed via Ansible Galaxy servers—which is often a problem in enterprise environments—this guide demonstrates how to install them from local sources e.g. local directories or repositories. This approach avoids reliance on public sources and ensures full control over external dependencies.
 
-This document brings you from classic playbook, trough Ansible Role and finally to Ansible Collection, concluding with Ansible Role interface specification. The next step in the learning path will cover testing and Ansible fact persistence.
+The material takes you from a classic playbook, through an Ansible Role, and finally to an Ansible Collection, concluding with the interface specification for Ansible Roles. The next step in the learning path will cover testing and Ansible fact persistence.
 
-Playbooks `apache*` take you through step towards Ansible Collection and Molecule testing, `duck*` set is a recap including argument specification; `state*` set of plays introduces fact persistence.
-
-All code is available in the `https://github.com/rstyczynski/ansible-collection-howto` repository.
+All code is available in the `https://github.com/rstyczynski/ansible-collection-howto` repository The `apache*` playbooks take you through the steps towards building an Ansible Collection and using Molecule for testing. The `duck*` set is a recap that includes argument specification, and the `state*` set of plays introduces fact persistence.
 
 == Contents
 toc::[]
