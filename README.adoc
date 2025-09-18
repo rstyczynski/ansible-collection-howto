@@ -411,12 +411,11 @@ By applying these two simple elements, you ensure that your role receives all re
 
 * Using Ansible collections, https://docs.ansible.com/ansible/latest/collections_guide/index.html
 
-* Ansible Configuration Settings, https://docs.ansible.com/ansible/latest/reference_appendices/config.html
-
 * Installing collections, https://docs.ansible.com/ansible/latest/collections_guide/collections_installing.html
 
 * Multiple collection in one git: https://docs.ansible.com/ansible/latest/collections_guide/collections_installing.html#specifying-the-collection-location-within-the-git-repository
 
 * Oracle OCI Collection install, https://docs.oracle.com/en-us/iaas/tools/oci-ansible-collection/5.4.0/installation/index.html
 
+* Ansible Configuration Settings, https://docs.ansible.com/ansible/latest/reference_appendices/config.html
 
