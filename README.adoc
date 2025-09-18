@@ -409,14 +409,14 @@ By applying these two simple elements, you ensure that your role receives all re
 
 == Appendix. References
 
-## References
+* Using Ansible collections, https://docs.ansible.com/ansible/latest/collections_guide/index.html
 
-1. Ansible Configuration Settings, https://docs.ansible.com/ansible/latest/reference_appendices/config.html
+* Ansible Configuration Settings, https://docs.ansible.com/ansible/latest/reference_appendices/config.html
 
-2. Installing collections, https://docs.ansible.com/ansible/latest/collections_guide/collections_installing.html
+* Installing collections, https://docs.ansible.com/ansible/latest/collections_guide/collections_installing.html
 
-3. Multiple collection in one git: https://docs.ansible.com/ansible/latest/collections_guide/collections_installing.html#specifying-the-collection-location-within-the-git-repository
+* Multiple collection in one git: https://docs.ansible.com/ansible/latest/collections_guide/collections_installing.html#specifying-the-collection-location-within-the-git-repository
 
-4. Oracle OCI Collection install, https://docs.oracle.com/en-us/iaas/tools/oci-ansible-collection/5.4.0/installation/index.html
+* Oracle OCI Collection install, https://docs.oracle.com/en-us/iaas/tools/oci-ansible-collection/5.4.0/installation/index.html
 
 
