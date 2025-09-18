@@ -1,0 +1,8 @@
+---
+- name: Null operation
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Null operation to eliminate missing playbook error
+      ansible.builtin.debug:
+        msg: "Null operation. This is a placeholder to eliminate missing playbook error."

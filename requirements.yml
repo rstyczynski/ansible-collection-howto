@@ -8,3 +8,4 @@ collections:
     type: git
     source: https://github.com/rstyczynski/ansible-collection-howto.git#/collections/ansible_collections/myorg/publicapi
     version: 0.1.2
+

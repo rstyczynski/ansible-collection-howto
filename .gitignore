@@ -1,9 +1,9 @@
 .vscode/
-.ansible
-venv_*/
+.ansible/
+.venv/
 state/
 documents/
-.DS_Store
-**/.DS_Store
 doc/
 README.html
+.DS_Store
+**/.DS_Store

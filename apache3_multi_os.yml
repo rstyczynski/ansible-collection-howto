@@ -15,7 +15,6 @@
         state: present
       when: ansible_os_family == "Debian"
 
-
     - name: Enable & start Apache on Debian
       ansible.builtin.service:
         name: apache2
@@ -27,8 +26,7 @@
     - name: Enable & start Apache on Redhat
       ansible.builtin.service:
         name: httpd
-        enabled: true
         state: started
+        enabled: true
       become: true
       when: ansible_os_family == "RedHat"
-      

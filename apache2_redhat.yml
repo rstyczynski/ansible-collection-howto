@@ -7,3 +7,9 @@
       ansible.builtin.yum:
         name: httpd
         state: present
+
+    - name: Enable & start Apache on Redhat
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: true

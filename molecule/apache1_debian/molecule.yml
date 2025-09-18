@@ -1,4 +1,8 @@
 ---
+ansible:
+  cfg:
+    defaults:
+      deprecation_warnings: false
 dependency:
   name: galaxy
 driver:
@@ -9,11 +13,12 @@ platforms:
     pre_build_image: false
     dockerfile: Dockerfile
     groups: [webservers]
-    
 provisioner:
   name: ansible
   playbooks:
-    converge: ../../apache2_debian.yml
+    converge: ../../apache1_debian.yml
+    prepare: ../default/null.yml
+    cleanup: ../default/null.yml
   inventory:
     host_vars:
       centos:
