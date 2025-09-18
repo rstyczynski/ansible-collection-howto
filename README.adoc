@@ -13,13 +13,15 @@
 
 Ansible collections are a distribution format for Ansible content, including roles, modules, plugins, test code, and documentation. They make it easy to package, share, and reuse automation across projects and teams.
 
-This tutorial shows how to create collections, maintain them in local directories or private GitHub repositories, and use them in playbooks.
+This introduction shows how to create collections, maintain them in local directories or private GitHub repositories, and use them in playbooks.
 
 As major Ansible collections are public and distributed via Ansible Galaxy servers, what typically is a problem in enterprise environments, this document demonstrates how to install them from a local directories and repository i.e. local sources. This approach avoids relying on public sources and ensures full control over external dependencies.
 
 This document brings you from classic playbook, trough Ansible Role and finally to Ansible Collection, concluding with Ansible Role interface specification. The next step in the learning path will cover testing and Ansible fact persistence.
 
-Playbooks `apache*` take you trough step towards Ansible Collection and Molecule testing, `duck*` set is a recap including argument specification; `state*` set of plays introduces fact persistence.
+Playbooks `apache*` take you through step towards Ansible Collection and Molecule testing, `duck*` set is a recap including argument specification; `state*` set of plays introduces fact persistence.
+
+All code is available in the `https://github.com/rstyczynski/ansible-collection-howto` repository.
 
 == Contents
 toc::[]
