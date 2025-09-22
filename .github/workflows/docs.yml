@@ -24,10 +24,25 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'   # any modern Ruby is fine
-          bundler-cache: true
+          bundler-cache: false  # we'll control bundler explicitly
 
-      - name: Install gems
-        run: bundle install --path vendor/bundle
+      - name: Ensure Gemfile exists
+        run: |
+          if [ ! -f Gemfile ]; then
+            cat > Gemfile <<'GEMFILE'
+source 'https://rubygems.org'
+
+gem 'asciidoctor', '~> 2.0'
+# multipage provides chunked HTML output
+gem 'asciidoctor-multipage', '~> 0.0.19'
+GEMFILE
+          fi
+          echo "Gemfile in repo:" && cat Gemfile
+
+      - name: Install gems (Bundler)
+        run: |
+          bundle config set --local path 'vendor/bundle'
+          bundle install --jobs 4 --retry 3
 
       - name: Build multipage HTML
         run: |
@@ -36,8 +51,7 @@ jobs:
           bundle exec asciidoctor-multipage -D build README.adoc
           # Prevent Jekyll from mangling / ignoring underscored paths
           touch build/.nojekyll
-          # Optional: set a minimal index if your README doesn’t become index.html
-          # (If asciidoctor-multipage already creates build/index.html, skip this)
+          # If README becomes README.html, make it index.html for Pages
           if [ ! -f build/index.html ] && [ -f build/README.html ]; then
             mv build/README.html build/index.html
           fi
