@@ -3,6 +3,6 @@
 .venv/
 state/
 documents/
-doc/
+doc_tmp/
 .DS_Store
 **/.DS_Store
