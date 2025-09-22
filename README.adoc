@@ -1,4 +1,14 @@
+== Ansible Collection Howto
+
+=== GitHub AsciiDoc documentation
 
 * link:doc/1.ORGANIZING.adoc[1. Organizing and Distributing Ansible Code Using Collections]
 * link:doc/2.TESTING.adoc[2. Testing with Molecule]
+
+=== GitHub Pages HTML documentation
+
+* link:https://rstyczynski.github.io/ansible-collection-howto/[Index]
+* link:https://rstyczynski.github.io/ansible-collection-howto/organizing/1.ORGANIZING.html[1. Organizing and Distributing Ansible Code Using Collections]
+* link:https://rstyczynski.github.io/ansible-collection-howto/testing/2.TESTING.html[2. Testing with Molecule]
+
 ====
