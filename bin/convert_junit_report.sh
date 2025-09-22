@@ -152,11 +152,13 @@ main() {
         echo -e "${BLUE}🌐 Full path: $(realpath "$final_output")${NC}"
         echo ""
         
-        # Ask if user wants to open in browser
-        read -p "Would you like to open the report in your browser? (y/N): " -n 1 -r
+        # Ask if user wants to open in browser, with 3 second timeout defaulting to N
+        read -t 3 -p "Would you like to open the report in your browser? (y/N): " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
             open_in_browser "$final_output"
+        else
+            echo
         fi
     else
         echo -e "${RED}Error: Output file was not created${NC}"

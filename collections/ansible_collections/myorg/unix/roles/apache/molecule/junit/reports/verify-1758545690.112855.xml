@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="0" tests="12" time="1.6698620319366455078125">
+	<testsuite disabled="0" errors="0" failures="0" name="verify" skipped="4" tests="12" time="1.6698620319366455078125">
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/collections/ansible_collections/myorg/unix/roles/apache/molecule/junit/verify.yml:12" name="[ubuntu] Verify: TEST_CASE: Verify Apache package is installed on RedHat that=[&quot;'httpd' in ansible_facts.packages&quot;], fail_msg=Apache (httpd) package is not installed on RedHat system" time="0.0131740570068359375">
+			<skipped>Conditional result was False</skipped>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/collections/ansible_collections/myorg/unix/roles/apache/molecule/junit/verify.yml:12" name="[centos] Verify: TEST_CASE: Verify Apache package is installed on RedHat that=[&quot;'httpd' in ansible_facts.packages&quot;], fail_msg=Apache (httpd) package is not installed on RedHat system" time="0.013371944427490234375">
+			<system-out>{
+    "changed": false,
+    "msg": "All assertions passed"
+}</system-out>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/collections/ansible_collections/myorg/unix/roles/apache/molecule/junit/verify.yml:19" name="[centos] Verify: TEST_CASE: Verify Apache package is installed on Debian that=[&quot;'apache2' in ansible_facts.packages&quot;], fail_msg=Apache (apache2) package is not installed on Debian system" time="0.0080029964447021484375">
+			<skipped>Conditional result was False</skipped>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/collections/ansible_collections/myorg/unix/roles/apache/molecule/junit/verify.yml:19" name="[ubuntu] Verify: TEST_CASE: Verify Apache package is installed on Debian that=[&quot;'apache2' in ansible_facts.packages&quot;], fail_msg=Apache (apache2) package is not installed on Debian system" time="0.0158138275146484375">
+			<system-out>{
+    "changed": false,
+    "msg": "All assertions passed"
+}</system-out>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/collections/ansible_collections/myorg/unix/roles/apache/molecule/junit/verify.yml:30" name="[ubuntu] Verify: TEST_CASE: Assert httpd service is running on RedHat that=[&quot;'httpd' in ansible_facts.services or 'httpd.service' in ansible_facts.services&quot;, &quot;ansible_facts.services.get('httpd.service').state == 'running'&quot;], fail_msg=Apache (httpd) service is not running on RedHat system, success_msg=Apache (httpd) service is running on RedHat system" time="0.0113990306854248046875">
+			<skipped>Conditional result was False</skipped>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/collections/ansible_collections/myorg/unix/roles/apache/molecule/junit/verify.yml:30" name="[centos] Verify: TEST_CASE: Assert httpd service is running on RedHat that=[&quot;'httpd' in ansible_facts.services or 'httpd.service' in ansible_facts.services&quot;, &quot;ansible_facts.services.get('httpd.service').state == 'running'&quot;], fail_msg=Apache (httpd) service is not running on RedHat system, success_msg=Apache (httpd) service is running on RedHat system" time="0.0116560459136962890625">
+			<system-out>{
+    "changed": false,
+    "msg": "Apache (httpd) service is running on RedHat system"
+}</system-out>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/collections/ansible_collections/myorg/unix/roles/apache/molecule/junit/verify.yml:39" name="[centos] Verify: TEST_CASE: Assert apache2 service is running on Debian that=[&quot;'apache2' in ansible_facts.services&quot;, &quot;ansible_facts.services['apache2'].state == 'running'&quot;], fail_msg=Apache (apache2) service is not running on Debian system, success_msg=Apache (apache2) service is running on Debian system" time="0.0073778629302978515625">
+			<skipped>Conditional result was False</skipped>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/collections/ansible_collections/myorg/unix/roles/apache/molecule/junit/verify.yml:39" name="[ubuntu] Verify: TEST_CASE: Assert apache2 service is running on Debian that=[&quot;'apache2' in ansible_facts.services&quot;, &quot;ansible_facts.services['apache2'].state == 'running'&quot;], fail_msg=Apache (apache2) service is not running on Debian system, success_msg=Apache (apache2) service is running on Debian system" time="0.01546764373779296875">
+			<system-out>{
+    "changed": false,
+    "msg": "Apache (apache2) service is running on Debian system"
+}</system-out>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/collections/ansible_collections/myorg/unix/roles/apache/molecule/junit/verify.yml:49" name="[centos] Verify: TEST_CASE: Check if port 80 is open (Apache) port=80, host={{ ansible_default_ipv4.address | default('127.0.0.1') }}, state=started, timeout=5" time="0.755234241485595703125">
+			<system-out>{
+"changed": false,
+"elapsed": 0,
+"match_groupdict": {},
+"match_groups": [],
+"path": null,
+"port": 80,
+"search_regex": null,
+"state": "started"
+}</system-out>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/collections/ansible_collections/myorg/unix/roles/apache/molecule/junit/verify.yml:49" name="[ubuntu] Verify: TEST_CASE: Check if port 80 is open (Apache) port=80, host={{ ansible_default_ipv4.address | default('127.0.0.1') }}, state=started, timeout=5" time="0.7900154590606689453125">
+			<system-out>{
+"changed": false,
+"elapsed": 0,
+"match_groupdict": {},
+"match_groups": [],
+"path": null,
+"port": 80,
+"search_regex": null,
+"state": "started"
+}</system-out>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/collections/ansible_collections/myorg/unix/roles/apache/molecule/junit/verify.yml:57" name="[centos] Verify: TEST_CASE: Assert port 80 is accessible that=['apache_port_check.state == &quot;started&quot;'], fail_msg=Port 80 is not accessible, success_msg=Port 80 is accessible" time="0.0122120380401611328125">
+			<system-out>{
+    "changed": false,
+    "msg": "Port 80 is accessible"
+}</system-out>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/collections/ansible_collections/myorg/unix/roles/apache/molecule/junit/verify.yml:57" name="[ubuntu] Verify: TEST_CASE: Assert port 80 is accessible that=['apache_port_check.state == &quot;started&quot;'], fail_msg=Port 80 is not accessible, success_msg=Port 80 is accessible" time="0.0161368846893310546875">
+			<system-out>{
+    "changed": false,
+    "msg": "Port 80 is accessible"
+}</system-out>
+		</testcase>
+	</testsuite>
+</testsuites>

@@ -1,0 +1,43 @@
+---
+- name: Verify
+  hosts: webservers
+  become: true
+  tasks:
+    - name: Check if Apache is installed
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Verify Apache package is installed
+      ansible.builtin.assert:
+        that:
+          - "'httpd' in ansible_facts.packages"
+        fail_msg: "Apache (httpd) package is not installed"
+
+    # === Service Block ===
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
+    - name: Assert httpd service is running on RedHat
+      ansible.builtin.assert:
+        that:
+          - "'httpd' in ansible_facts.services or 'httpd.service' in ansible_facts.services"
+          - "ansible_facts.services.get('httpd.service').state == 'running'"
+        fail_msg: "Apache (httpd) service is not running on RedHat system"
+        success_msg: "Apache (httpd) service is running on RedHat system"
+
+
+    # === TCP Block ===
+    - name: Check if port 80 is open (Apache)
+      ansible.builtin.wait_for:
+        port: 80
+        host: "{{ ansible_default_ipv4.address | default('127.0.0.1') }}"
+        state: started
+        timeout: 5
+      register: apache_port_check
+
+    - name: Assert port 80 is accessible
+      ansible.builtin.assert:
+        that:
+          - apache_port_check.state == "started"
+        fail_msg: "Port 80 is not accessible"
+        success_msg: "Port 80 is accessible"

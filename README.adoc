@@ -7,6 +7,9 @@
 :toc-title: 
 :toclevels: 4
 
+:multipage-level: 1
+:multipage-chunk-filename-pattern: {id}.html
+
 = Organizing and Distributing Ansible Code Using Collections
 {author}, v{revnumber} {revremark}, {revdate}
 
@@ -24,11 +27,12 @@ The material takes you from a classic playbook, through an Ansible Role, and fin
 
 This story is supported by code available at the `https://github.com/rstyczynski/ansible-collection-howto` repository The `apache*` playbooks take you through the steps towards building an Ansible Collection and using Molecule for testing. The `duck*` set is a recap that includes argument specification, and the `state*` set of plays introduces fact persistence.
 
+[[Contents]]
 == Contents
 toc::[]
 
-
 <<<
+[[I.Playbook]]
 == 1. The Classic Playbook
 
 The following HTTP server examples illustrate how an Ansible playbook evolves as infrastructure requirements grow. We begin with a playbook designed specifically for Red Hat systems, then extend it to support Debian. This progression demonstrates the Ansible logic lifecycle and highlights the maintenance consequences in enterprise environments.
@@ -95,7 +99,9 @@ The combined version is a little more complex, harder to read, and more fragile.
 
 In the next step, I'll present how to encapsulate the code in a fundamental Ansible element — the Role. For the price of a few additional development steps, an Ansible Role provides more benefits in enterprise environments.
 
+
 <<<
+[[II.Role]]
 == 2. Ansible Role
 
 === 2.1 Ansible Role vs. Module
@@ -197,6 +203,7 @@ Using just Ansible Roles is a partial solution, as role was introduced for soke 
 Collections are top level distribution components used world-wide by all small and corporate size providers. On the other hand collection are super easy to use and maintain, giving enterprise level capabilities to Ansible adopters.
 
 <<<
+[[III.Collection]]
 == 3. Introduction to Ansible Collections
 
 Ansible Collections are a standardized packaging format that bundle together multiple types of Ansible content—such as roles, modules, plugins, and documentation—into a single, organized unit. This approach streamlines the distribution and management of automation resources, allowing you to work with related content as a whole rather than handling individual roles or modules separately.
@@ -373,6 +380,7 @@ Instead of installation progress, you will see an error:
 ----
 
 <<<
+[[IV.Argument_specification]]
 == 4. Ansible Role argument specification
 
 Ansible provides the capability to specify a Role's argument definitions. This feature is limited to inputs, but it can serve as a starting point for defining output properties as well. To demonstrate this capability, we use a simple DuckDuckGo API integration that returns a description of a given person’s name. This use case runs on the controller, so it does not require any managed hosts. It also serves as a recap of roles and collections, with the focus on argument definitions.
@@ -408,6 +416,7 @@ It is verified at runtime by a task at the start of the Role’s logic, using th
 
 By applying these two simple elements, you ensure that your role receives all required arguments in the expected format.
 
+[[Appendix_References]]
 == Appendix. References
 
 * Using Ansible collections, https://docs.ansible.com/ansible/latest/collections_guide/index.html

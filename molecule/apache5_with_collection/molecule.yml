@@ -1,4 +1,9 @@
 ---
+ansible:
+  cfg:
+    defaults:
+      deprecation_warnings: false
+
 dependency:
   name: galaxy
   options:
@@ -6,7 +11,7 @@ dependency:
 
 driver:
   name: podman
-  
+
 platforms:
   - name: centos
     image: quay.io/centos/centos:stream9
@@ -28,18 +33,6 @@ platforms:
     pre_build_image: false
     dockerfile: Dockerfile.ubuntu
     groups: [webservers]
-
-provisioner:
-  name: ansible
-
-  inventory:
-    host_vars:
-      centos:
-        ansible_user: root
-      ubuntu:
-        ansible_user: root
-verifier:
-  name: ansible
 
 scenario:
   create_sequence:

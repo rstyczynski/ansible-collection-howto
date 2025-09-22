@@ -1,0 +1,25 @@
+---
+ansible:
+  cfg:
+    defaults:
+      deprecation_warnings: false
+
+driver:
+  name: podman
+
+platforms:
+  - name: ubuntu
+    image: ubuntu:22.04
+    pre_build_image: false
+    dockerfile: Dockerfile
+    groups: [webservers]
+
+provisioner:
+  name: ansible
+  playbooks:
+    converge: ../../apache1_debian.yml
+
+  env:
+    ANSIBLE_CALLBACKS_ENABLED: ansible.builtin.junit
+    JUNIT_TEST_CASE_PREFIX: "TEST_CASE"
+    JUNIT_OUTPUT_DIR: "reports"

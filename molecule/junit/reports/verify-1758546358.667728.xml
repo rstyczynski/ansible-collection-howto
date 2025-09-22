@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="0" tests="4" time="0.8285028934478759765625">
+	<testsuite disabled="0" errors="0" failures="0" name="verify" skipped="0" tests="4" time="0.8285028934478759765625">
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/molecule/junit/verify.yml:10" name="[ubuntu] Verify: TEST_CASE: Verify Apache package is installed that=[&quot;'apache2' in ansible_facts.packages&quot;], fail_msg=Apache (apache2) package is not installed" time="0.0104830265045166015625">
+			<system-out>{
+    "changed": false,
+    "msg": "All assertions passed"
+}</system-out>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/molecule/junit/verify.yml:21" name="[ubuntu] Verify: TEST_CASE: Assert apache2 service is running on Debian that=[&quot;'apache2' in ansible_facts.services&quot;, &quot;ansible_facts.services['apache2'].state == 'running'&quot;], fail_msg=Apache (apache2) service is not running on Debian system, success_msg=Apache (apache2) service is running on Debian system" time="0.0128819942474365234375">
+			<system-out>{
+    "changed": false,
+    "msg": "Apache (apache2) service is running on Debian system"
+}</system-out>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/molecule/junit/verify.yml:30" name="[ubuntu] Verify: TEST_CASE: Check if port 80 is open (Apache) port=80, host={{ ansible_default_ipv4.address | default('127.0.0.1') }}, state=started, timeout=5" time="0.7929418087005615234375">
+			<system-out>{
+"changed": false,
+"elapsed": 0,
+"match_groupdict": {},
+"match_groups": [],
+"path": null,
+"port": 80,
+"search_regex": null,
+"state": "started"
+}</system-out>
+		</testcase>
+		<testcase classname="/Users/rstyczynski/projects/ansible-collection-howto/molecule/junit/verify.yml:38" name="[ubuntu] Verify: TEST_CASE: Assert port 80 is accessible that=['apache_port_check.state == &quot;started&quot;'], fail_msg=Port 80 is not accessible, success_msg=Port 80 is accessible" time="0.012196063995361328125">
+			<system-out>{
+    "changed": false,
+    "msg": "Port 80 is accessible"
+}</system-out>
+		</testcase>
+	</testsuite>
+</testsuites>

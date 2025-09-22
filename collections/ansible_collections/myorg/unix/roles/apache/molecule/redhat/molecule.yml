@@ -23,7 +23,3 @@ platforms:
       container: docker
     groups: [webservers]
     
-provisioner:
-  name: ansible
-  playbooks:
-    converge: ../../apache2_redhat.yml

@@ -1,7 +1,6 @@
 ---
-- name: Converge test
+- name: Install Apache on RedHat and Debian systems (collection)
   hosts: webservers
-  gather_facts: true
-
+  become: true
   roles:
-    - role: myorg.unix.apache
+    - myorg.unix.apache

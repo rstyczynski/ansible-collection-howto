@@ -26,17 +26,9 @@ platforms:
 
 provisioner:
   name: ansible
-  inventory:
-    host_vars:
-      centos:
-        ansible_user: root
-      ubuntu:
-        ansible_user: root
+
   env:
     ANSIBLE_CALLBACKS_ENABLED: ansible.builtin.junit
     JUNIT_TEST_CASE_IGNORE_TEXT: "JUNIT_IGNORE"
     JUNIT_TEST_CASE_PREFIX: "TEST_CASE"
     JUNIT_OUTPUT_DIR: "reports"
-    
-verifier:
-  name: ansible

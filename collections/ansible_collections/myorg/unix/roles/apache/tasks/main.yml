@@ -1,16 +1,15 @@
 ---
-- name: install apache2
+- name: Install apache2
   ansible.builtin.apt:
     name: apache2
-    update_cache: yes
-    state: latest
+    state: present
   become: true
   when: ansible_os_family == "Debian"
 
-- name: install httpd
+- name: Install httpd
   ansible.builtin.dnf:
     name: httpd
-    state: latest
+    state: present
   become: true
   when: ansible_os_family == "RedHat"
 
