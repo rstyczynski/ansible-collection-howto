@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
 <meta name="author" content="Ryszard Styczynski">
-<title>Testing with Molecule</title>
+<title>Organizing and Distributing Ansible Code Using Collections</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -439,110 +439,161 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
              .nav-footer{text-align: center; margin-top: auto;}
              .nav-footer > p > a {white-space: nowrap;}</style>
 </head>
-<body id="V.The_converge_play" class="article">
+<body id="II.Role" class="article">
 <div id="header">
-<h1>Testing with Molecule</h1>
+<h1>Organizing and Distributing Ansible Code Using Collections</h1>
 <div class="details">
 <span id="author" class="author">Ryszard Styczynski</span><br>
 <span id="revnumber">version 0.1,</span>
-<span id="revdate">2025-09-22</span>
+<span id="revdate">2025-09-16</span>
 <br><span id="revremark">DRAFT</span>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="V.The_converge_play">5. Writing the converge play</h2>
+<h2 id="II.Role">2. Ansible Role</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_2_1_ansible_role_vs_module">2.1 Ansible Role vs. Module</h3>
 <div class="paragraph">
-<p>The converge play is a regular playbook, and you will specify in the <code>molecule.yml</code> a reference to your playbook when it&#8217;s a test target.</p>
+<p>The initial code directly used Ansible Modules - atomic Ansible steps, used to build playbooks. Now the code will be refactored to utilize Ansible Roles.</p>
+</div>
+<div class="paragraph">
+<p>Ansible Modules and Roles serve different purposes in the automation ecosystem. A module is a single, self-contained unit of work that performs a specific task, such as installing a package (<code>yum</code>, <code>apt</code>), or copying files (<code>copy</code>). Modules are the fundamental building blocks in Ansible; each task in a playbook typically invokes a module to carry out a particular action on the managed hosts.</p>
+</div>
+<div class="paragraph">
+<p>In contrast, a role is a higher-level organizational structure that groups together multiple related tasks, along with their defaults, handlers, templates, files, and variables. Roles provide a standardized way to package and reuse automation logic, making it easy to share and apply complex configurations across different projects or environments. By organizing content into roles, you can separate concerns, promote consistency, and reduce duplication in your automation code.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_2_scaffold_ansible_role_directory_structure">2.2 Scaffold Ansible Role directory structure</h3>
+<div class="paragraph">
+<p>As Ansible role requires specific directory structure it&#8217;s handy use ansible tool to initialize the directory.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># molecule.yml (fragment)
-provisioner:
-  name: ansible
-  playbooks:
-    converge: ../../apache1_debian.yml</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">ansible-galaxy role init apache</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you prefer to write your own play, create a <code>converge.yml</code> file in the test scenario directory. Example of such configuration is provided in the <code>apache4_with_role</code> test scenario.</p>
+<p>This creates a full role skeleton in roles/apache/ with the standard Ansible structure for the role:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># converge.yml
----
-- name: Install Apache on RedHat and Debian systems (role)
-  hosts: webservers
-  become: true
+<pre class="highlight"><code class="language-text" data-lang="text">roles/
+  apache/
+    defaults/
+      main.yml
+    files/
+    handlers/
+      main.yml
+    meta/
+      main.yml
+    tasks/
+      main.yml
+    templates/
+    tests/
+      inventory
+      test.yml
+    vars/
+      main.yml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It&#8217;s important to understand each place in a role hierarchy, however not all of them are critical for regular use. Here is a list of critical directories:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>tasks: the role&#8217;s executable logic. Split into additional task files and import/include as needed.</p>
+</li>
+<li>
+<p>defaults: lowest-precedence vars for the role. Use for safe, overridable settings users might tweak.</p>
+</li>
+<li>
+<p>vars: Higher-precedence vars than defaults (vars/main.yml). Use for internal/platform-specific values rarely overridden.</p>
+</li>
+<li>
+<p>meta: role metadata and dependencies: supported platforms, required roles/collections, Galaxy info. Recent Ansible describes here role&#8217;s argument.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_3_move_existing_tasks_into_the_role">2.3 Move existing tasks into the Role</h3>
+<div class="paragraph">
+<p>Role delivers multiple features, however on this stage we are interested in roles/apache/tasks/main.yml file to move playbook&#8217;s core logic to this place.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">---
+- name: Install Apache on RedHat
+  ansible.builtin.yum:
+    name: httpd
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Install Apache on Debian
+  ansible.builtin.apt:
+    name: apache2
+    state: present
+  when: ansible_os_family == "Debian"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now the complexity is encapsulated in Ansible Role, and the user see only top level technical function - make apache up and running.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_4_revert_the_playbook_to_the_simplest_format">2.4 Revert the Playbook to the simplest format</h3>
+<div class="paragraph">
+<p>Having above Role ready, the playbook may be super simple. It&#8217;s even more simple that the initial one. All the complexity is hidden now in Role and the administrator calls pure business need to activate apache.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- hosts: webservers
+  become: yes
+
   roles:
     - apache</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Notice that in case of writing a <code>converge.yml</code> play you need to take care of roles to be available for Ansible. One technique to configure the right directory is to set ENV in the <code>provisioner</code> stage configuration. <code>MOLECULE_PROJECT_DIRECTORY</code> contains the path level for the tested component. In case of playbooks, it&#8217;s the repo root directory; it will be a little different for role components.</p>
+<p>Note that one more element should be simplified - the root control, by moving Ansible&#8217;s "become" to the lower level. It will be done later during refactoring supported by Molecule testing.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># molecule.yml (fragment)
-provisioner:
-  name: ansible
-  env:
-    ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}/roles"</code></pre>
 </div>
+<div class="sect2">
+<h3 id="_2_5_limitations_of_the_module_and_role_based_approaches">2.5 Limitations of the module and role based approaches</h3>
+<div class="paragraph">
+<p>The examples above show a natural evolution: starting from a simple RedHat-only playbook, extending it to support Debian systems, and finally moving the complexity into an Ansible Role. While using roles helps organize and encapsulate the automation logic, the traditional approach of copying playbooks and roles between multiple projects remains problematic.</p>
 </div>
 <div class="paragraph">
-<p>For clarity, I&#8217;ll show the <code>converge.yml</code> for a play using collections. It&#8217;s the same as a role with a change in fully qualified role name, which now is explicitly taken from the <code>myorg.unix</code> namespace.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># converge.yml
----
-- name: Install Apache on RedHat and Debian systems (collection)
-  hosts: webservers
-  become: true
-  roles:
-    - myorg.unix.apache</code></pre>
-</div>
+<p>Duplicating these playbooks and roles across projects leads to multiple copies that can diverge over time, causing version drift and inconsistencies. This fragmentation makes it difficult to maintain and update automation content effectively, as changes applied in one place are not automatically reflected elsewhere. Let&#8217;s imagine that tha playbook was used by multiple users, who copied it to their environments. Does not smell good.</p>
 </div>
 <div class="paragraph">
-<p>Notice <code>requirements.yml</code> in the test scenario directory. This file is processed by the <code>dependency</code> stage to install all required collections.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># requirements.yml
----
-collections:
-  - name: collections/ansible_collections/myorg/unix/
-    type: dir</code></pre>
-</div>
+<p>As a result, version control becomes scattered, and managing updates requires significant manual effort and coordination. Although this approach may work for small environments, enterprise-scale automation demands better separation of concerns, strict versioning, and mechanisms that prevent code duplication to ensure maintainability and consistency across teams.</p>
 </div>
 <div class="paragraph">
-<p>The dependency stage is configured to use the <code>requirements.yml</code> file by the <code>molecule.yml</code> directive.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># molecule.yml (fragment)
-dependency:
-  name: galaxy
-  options:
-    requirements-file: requirements.yml</code></pre>
-</div>
+<p>One may argue that a role can be stored in its own Git repository and then included in a project. This approach indeed solves some challenges, such as version control and reuse across multiple playbooks. However, it still leaves other problems unresolved — for example, potential naming clashes, the lack of a consistent packaging format, and difficulties in managing dependencies.</p>
 </div>
 <div class="paragraph">
-<p>At this stage, you understand how to prepare Molecule tests for a standalone play, play with role, and a play using a collection executing in a Podman-controlled environment. Let&#8217;s take a closer look at the assertion play.</p>
+<p>Using just Ansible Roles is a partial solution, as role was introduced for soke purposes, Ansible community noticed a need to make next step. Finally as for today all aspects of domain specific logic are packaged in Ansible Collection.</p>
+</div>
+<div class="paragraph">
+<p>Collections are top level distribution components used world-wide by all small and corporate size providers. On the other hand collection are super easy to use and maintain, giving enterprise level capabilities to Ansible adopters.</p>
 </div>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
+</div>
 <div class="paragraph nav-footer">
-<p>← Previous: <a href="IV.Executing_playbook_test.html">4. Executing playbook test</a> | ↑ Up: <a href="2.TESTING.html">Testing with Molecule</a> | Next: <a href="VI.The_verification_play.html">6. Writing the verification play</a> →</p>
+<p>← Previous: <a href="I.Playbook.html">1. The Classic Playbook</a> | ↑ Up: <a href="1.ORGANIZING.html">Organizing and Distributing Ansible Code Using Collections</a> | Next: <a href="III.Collection.html">3. Introduction to Ansible Collections</a> →</p>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 0.1<br>
-Last updated 2025-09-22 23:04:57 +0200
+Last updated 2025-09-22 16:20:05 +0200
 </div>
 </div>
 </body>

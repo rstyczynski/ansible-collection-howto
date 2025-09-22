@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
 <meta name="author" content="Ryszard Styczynski">
-<title>Testing with Molecule</title>
+<title>Organizing and Distributing Ansible Code Using Collections</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -439,110 +439,245 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
              .nav-footer{text-align: center; margin-top: auto;}
              .nav-footer > p > a {white-space: nowrap;}</style>
 </head>
-<body id="V.The_converge_play" class="article">
+<body id="III.Collection" class="article">
 <div id="header">
-<h1>Testing with Molecule</h1>
+<h1>Organizing and Distributing Ansible Code Using Collections</h1>
 <div class="details">
 <span id="author" class="author">Ryszard Styczynski</span><br>
 <span id="revnumber">version 0.1,</span>
-<span id="revdate">2025-09-22</span>
+<span id="revdate">2025-09-16</span>
 <br><span id="revremark">DRAFT</span>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="V.The_converge_play">5. Writing the converge play</h2>
+<h2 id="III.Collection">3. Introduction to Ansible Collections</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The converge play is a regular playbook, and you will specify in the <code>molecule.yml</code> a reference to your playbook when it&#8217;s a test target.</p>
+<p>Ansible Collections are a standardized packaging format that bundle together multiple types of Ansible content—such as roles, modules, plugins, and documentation—into a single, organized unit. This approach streamlines the distribution and management of automation resources, allowing you to work with related content as a whole rather than handling individual roles or modules separately.</p>
+</div>
+<div class="paragraph">
+<p>Collections greatly improve reusability and versioning. By packaging content into collections, you can easily share your work within your team or with the wider Ansible community. Collections also support structured version control, enabling you to track changes, update content safely, and ensure compatibility across projects. This makes maintaining and evolving automation simpler and more reliable.</p>
+</div>
+<div class="paragraph">
+<p>Collections can be stored locally, published to public repositories like Ansible Galaxy, or hosted in private repositories (e.g., GitHub). This flexibility makes them suitable for both community-driven projects and enterprise environments where control and security are required. Overall, Ansible Collections provide a powerful way to organize, share, and manage automation content efficiently.</p>
+</div>
+<div class="paragraph">
+<p>A key feature introduced by Ansible Collections is the <strong>namespace</strong> — the top-level identifier that groups collections, prevents naming conflicts, and indicates ownership. Examples include <code>community.general</code> or <code>myorg.apache</code>. Namespaces are particularly important in large organizations and when sharing collections publicly, as they help maintain clear boundaries and avoid collisions.</p>
+</div>
+<div class="sect2">
+<h3 id="_3_1_collections_vs_roles_vs_modules">3.1 Collections vs Roles vs Modules</h3>
+<div class="paragraph">
+<p>As discussed earlier, modules are the smallest building blocks in Ansible, performing atomic actions within tasks. Roles group tasks and related content into reusable units, sitting one level above modules. Collections extend this concept further by packaging roles, modules, plugins, and documentation together into a single, distributable format.</p>
+</div>
+<div class="paragraph">
+<p>Collections sit at the top of the hierarchy as the primary packaging layer. They address challenges around sharing, versioning, and dependency management across projects—problems that roles alone cannot fully solve. Collections are therefore essential for maintaining consistency and scalability in larger automation environments.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_2_collection_structure">3.2 Collection Structure</h3>
+<div class="paragraph">
+<p>Like roles, collections are based on a strict directory structure. Ansible provides tooling to scaffold the initial directory layout.</p>
+</div>
+<div class="paragraph">
+<p>The <code>ansible-galaxy</code> utility creates the directory structure for a collection. Unlike role creation, you must provide both a namespace and a collection name. For example, using <code>myorg.unix</code> (<code>myorg</code> as the namespace, <code>unix</code> as the collection name):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># molecule.yml (fragment)
-provisioner:
-  name: ansible
-  playbooks:
-    converge: ../../apache1_debian.yml</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">ansible-galaxy collection init myorg.unix</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you prefer to write your own play, create a <code>converge.yml</code> file in the test scenario directory. Example of such configuration is provided in the <code>apache4_with_role</code> test scenario.</p>
+<p>This command creates a full collection skeleton in the <code>myorg/unix/</code> directory with the standard structure. Note the <code>roles</code> directory, which will contain all roles belonging to the collection.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># converge.yml
----
-- name: Install Apache on RedHat and Debian systems (role)
-  hosts: webservers
-  become: true
-  roles:
-    - apache</code></pre>
+<pre class="highlight"><code class="language-text" data-lang="text">myorg/
+  unix/
+    docs/
+    plugins/
+    roles/
+    galaxy.yml
+    README.md</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_3_move_existing_role_into_the_collection">3.3 Move Existing Role into the Collection</h3>
+<div class="paragraph">
+<p>The previously created <code>apache</code> role can be moved into the collection under <code>myorg/unix/roles/apache/</code>. The role structure remains the same, and the tasks will continue to function without modification.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-text" data-lang="text">myorg/
+  unix/
+    roles/
+      apache/
+        tasks/
+          main.yml
+        defaults/
+        handlers/
+        meta/
+        templates/
+        vars/
+        files/</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_4_installing_the_collection">3.4 Installing the Collection</h3>
+<div class="paragraph">
+<p>In this tutorial, the collection is kept in the Ansible-aware <code>collections/ansible_collections</code> directory to make it directly available for playbooks. This works for special cases but is not suitable for regular enterprise usage. Before use, the collection should be installed to the proper location.</p>
+</div>
+<div class="paragraph">
+<p>The installation location is configurable, but for now, we will use the default (<code>~/.ansible</code>). Ansible defines a standard way to bring a collection from any location into the local execution environment, supporting sources such as Galaxy, Git, URL, file directory, or subdirectories.</p>
+</div>
+<div class="paragraph">
+<p>Typically, collection installation is managed via a <code>requirements.yml</code> file that specifies dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">---
+collections:
+  - name: collections/ansible_collections/myorg/unix/
+    type: dir
+  - name: collections/ansible_collections/myorg/toolchain/
+    type: dir
+  - name: collections/ansible_collections/myorg/publicapi/
+    type: git
+    source: https://github.com/rstyczynski/ansible-collection-howto.git#/collections/ansible_collections/myorg/publicapi
+    version: main</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Note that Ansible supports wide range of sources for collections, including Git, URL, file directory, or subdirectories. Collection stored at git may be placed in a subdirectory of the repository, what may be beneficial is some cases, however for production like collections always use dedicated repository, what gives full control over the collection to the owner.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>With <code>requirements.yml</code> ready, install the dependencies using the <code>ansible-galaxy</code> tool:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">ansible-galaxy install -r requirements.yml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Notice that in case of writing a <code>converge.yml</code> play you need to take care of roles to be available for Ansible. One technique to configure the right directory is to set ENV in the <code>provisioner</code> stage configuration. <code>MOLECULE_PROJECT_DIRECTORY</code> contains the path level for the tested component. In case of playbooks, it&#8217;s the repo root directory; it will be a little different for role components.</p>
+<p>You can verify that the collection is available:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># molecule.yml (fragment)
-provisioner:
-  name: ansible
-  env:
-    ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}/roles"</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">ansible-galaxy collection list | grep myorg</code></pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_3_5_simplify_the_playbook_using_the_collection">3.5 Simplify the Playbook Using the Collection</h3>
 <div class="paragraph">
-<p>For clarity, I&#8217;ll show the <code>converge.yml</code> for a play using collections. It&#8217;s the same as a role with a change in fully qualified role name, which now is explicitly taken from the <code>myorg.unix</code> namespace.</p>
+<p>With the role now inside the collection and the collection installed, you can reference it in your playbook:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># converge.yml
----
-- name: Install Apache on RedHat and Debian systems (collection)
-  hosts: webservers
-  become: true
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- hosts: webservers
+  become: yes
+
   roles:
     - myorg.unix.apache</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Notice <code>requirements.yml</code> in the test scenario directory. This file is processed by the <code>dependency</code> stage to install all required collections.</p>
+<p>Note the namespace prefix (<code>myorg.unix</code>). This allows you to use an <code>apache</code> role supplied by different authors, as collections use namespaces to avoid naming conflicts.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_6_benefits_of_using_collections">3.6 Benefits of Using Collections</h3>
+<div class="paragraph">
+<p>Roles already provide organization and reusability, but collections extend these advantages significantly. A collection can bundle roles together with modules, plugins, and documentation in one package. You no longer need to manage these elements separately across projects.</p>
+</div>
+<div class="paragraph">
+<p>While roles can be versioned (e.g., via Git tags or Galaxy releases), the mechanism is mostly ad hoc and external. Collections, by contrast, make versioning a first-class feature: every collection carries a version in its <code>galaxy.yml</code>, and dependencies on other collections can be declared in a structured way. This makes it easier to control upgrades, avoid incompatibilities, and ensure consistency across environments.</p>
+</div>
+<div class="paragraph">
+<p>Another key benefit is unified distribution. While roles can be shared via Galaxy, GitHub, or private repositories, collections package multiple content types (roles, modules, plugins, documentation) together. This makes installation, versioning, and sharing more consistent and predictable, especially in larger environments.</p>
+</div>
+<div class="paragraph">
+<p>In summary, collections are the natural next step after roles: they enhance reusability, standardize version control, and provide the dependency management needed for automation at scale.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_7_advanced_topics">3.7 Advanced Topics</h3>
+<div class="sect3">
+<h4 id="_3_7_1_custom_collection_installation">3.7.1 Custom Collection Installation</h4>
+<div class="paragraph">
+<p>Oracle distributes its OCI Collection through regular Ansible Galaxy servers, but this document focuses on local sources. The following example shows how to install the Oracle OCI Collection from a tar source, downloading and building it first:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># requirements.yml
----
-collections:
-  - name: collections/ansible_collections/myorg/unix/
-    type: dir</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">curl -L -o /tmp/oci-ansible-collection-5.5.0.tar \
+  https://github.com/oracle/oci-ansible-collection/archive/refs/tags/v5.5.0.tar.gz
+mkdir -p /tmp/oci-ansible-collection-src
+tar -xf /tmp/oci-ansible-collection-5.5.0.tar -C /tmp/oci-ansible-collection-src --strip-components=1
+cd /tmp/oci-ansible-collection-src
+ansible-galaxy collection build</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>The dependency stage is configured to use the <code>requirements.yml</code> file by the <code>molecule.yml</code> directive.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># molecule.yml (fragment)
-dependency:
-  name: galaxy
-  options:
-    requirements-file: requirements.yml</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">ansible-galaxy collection install oracle-oci-5.5.0.tar.gz
+
+ansible-galaxy collection list | grep oracle.oci</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3_7_2_blocking_public_galaxy_servers">3.7.2 Blocking Public Galaxy Servers</h4>
+<div class="paragraph">
+<p>Blocking public sources may not be straightforward without additional firewall measures. However, a simple technique disables public Galaxy servers at the Ansible level, which can be applied as a first protection layer in pipelines.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">export ANSIBLE_GALAXY_SERVER_LIST=blocked
+export ANSIBLE_GALAXY_SERVER_BLOCKED_TOKEN='blocked'</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>At this stage, you understand how to prepare Molecule tests for a standalone play, play with role, and a play using a collection executing in a Podman-controlled environment. Let&#8217;s take a closer look at the assertion play.</p>
+<p>Now, if you try to install Oracle OCI:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">ansible-galaxy collection install oracle.oci --force</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Instead of installation progress, you will see an error:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-text" data-lang="text">[ERROR]: Required config 'url' for 'blocked' galaxy_server plugin not provided.</code></pre>
+</div>
 </div>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
+</div>
+</div>
 <div class="paragraph nav-footer">
-<p>← Previous: <a href="IV.Executing_playbook_test.html">4. Executing playbook test</a> | ↑ Up: <a href="2.TESTING.html">Testing with Molecule</a> | Next: <a href="VI.The_verification_play.html">6. Writing the verification play</a> →</p>
+<p>← Previous: <a href="II.Role.html">2. Ansible Role</a> | ↑ Up: <a href="1.ORGANIZING.html">Organizing and Distributing Ansible Code Using Collections</a> | Next: <a href="IV.Argument_specification.html">4. Ansible Role argument specification</a> →</p>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 0.1<br>
-Last updated 2025-09-22 23:04:57 +0200
+Last updated 2025-09-22 16:20:05 +0200
 </div>
 </div>
 </body>

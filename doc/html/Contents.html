@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
 <meta name="author" content="Ryszard Styczynski">
-<title>Testing with Molecule</title>
+<title>Organizing and Distributing Ansible Code Using Collections</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -439,110 +439,48 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
              .nav-footer{text-align: center; margin-top: auto;}
              .nav-footer > p > a {white-space: nowrap;}</style>
 </head>
-<body id="V.The_converge_play" class="article">
+<body id="Contents" class="article">
 <div id="header">
-<h1>Testing with Molecule</h1>
+<h1>Organizing and Distributing Ansible Code Using Collections</h1>
 <div class="details">
 <span id="author" class="author">Ryszard Styczynski</span><br>
 <span id="revnumber">version 0.1,</span>
-<span id="revdate">2025-09-22</span>
+<span id="revdate">2025-09-16</span>
 <br><span id="revremark">DRAFT</span>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="V.The_converge_play">5. Writing the converge play</h2>
+<h2 id="Contents">Contents</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The converge play is a regular playbook, and you will specify in the <code>molecule.yml</code> a reference to your playbook when it&#8217;s a test target.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># molecule.yml (fragment)
-provisioner:
-  name: ansible
-  playbooks:
-    converge: ../../apache1_debian.yml</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If you prefer to write your own play, create a <code>converge.yml</code> file in the test scenario directory. Example of such configuration is provided in the <code>apache4_with_role</code> test scenario.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># converge.yml
----
-- name: Install Apache on RedHat and Debian systems (role)
-  hosts: webservers
-  become: true
-  roles:
-    - apache</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Notice that in case of writing a <code>converge.yml</code> play you need to take care of roles to be available for Ansible. One technique to configure the right directory is to set ENV in the <code>provisioner</code> stage configuration. <code>MOLECULE_PROJECT_DIRECTORY</code> contains the path level for the tested component. In case of playbooks, it&#8217;s the repo root directory; it will be a little different for role components.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># molecule.yml (fragment)
-provisioner:
-  name: ansible
-  env:
-    ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}/roles"</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>For clarity, I&#8217;ll show the <code>converge.yml</code> for a play using collections. It&#8217;s the same as a role with a change in fully qualified role name, which now is explicitly taken from the <code>myorg.unix</code> namespace.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># converge.yml
----
-- name: Install Apache on RedHat and Debian systems (collection)
-  hosts: webservers
-  become: true
-  roles:
-    - myorg.unix.apache</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Notice <code>requirements.yml</code> in the test scenario directory. This file is processed by the <code>dependency</code> stage to install all required collections.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># requirements.yml
----
-collections:
-  - name: collections/ansible_collections/myorg/unix/
-    type: dir</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The dependency stage is configured to use the <code>requirements.yml</code> file by the <code>molecule.yml</code> directive.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># molecule.yml (fragment)
-dependency:
-  name: galaxy
-  options:
-    requirements-file: requirements.yml</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>At this stage, you understand how to prepare Molecule tests for a standalone play, play with role, and a play using a collection executing in a Podman-controlled environment. Let&#8217;s take a closer look at the assertion play.</p>
+<div id="toc" class="toc">
+<div id="toctitle" class="title"></div>
+<p><span class="toc-root"><a href="1.ORGANIZING.html">Organizing and Distributing Ansible Code Using Collections</a></span></p><ul class="sectlevel1">
+<li><a href="Contents.html"><span class="toc-current">Contents</span></a>
+</li>
+<li><a href="I.Playbook.html">1. The Classic Playbook</a>
+</li>
+<li><a href="II.Role.html">2. Ansible Role</a>
+</li>
+<li><a href="III.Collection.html">3. Introduction to Ansible Collections</a>
+</li>
+<li><a href="IV.Argument_specification.html">4. Ansible Role argument specification</a>
+</li>
+<li><a href="Appendix_References.html">Appendix. References</a>
+</li>
+</ul>
 </div>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
 <div class="paragraph nav-footer">
-<p>← Previous: <a href="IV.Executing_playbook_test.html">4. Executing playbook test</a> | ↑ Up: <a href="2.TESTING.html">Testing with Molecule</a> | Next: <a href="VI.The_verification_play.html">6. Writing the verification play</a> →</p>
+<p>↑ Up: <a href="1.ORGANIZING.html">Organizing and Distributing Ansible Code Using Collections</a> | Next: <a href="I.Playbook.html">1. The Classic Playbook</a> →</p>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 0.1<br>
-Last updated 2025-09-22 23:04:57 +0200
+Last updated 2025-09-22 16:20:05 +0200
 </div>
 </div>
 </body>

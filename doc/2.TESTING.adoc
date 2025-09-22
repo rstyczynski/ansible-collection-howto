@@ -558,7 +558,9 @@ During execution of such test, the junit report file is being populated with dat
 molecule test -s junit
 ----
 
-After the test, the report must be converted from native `xml` format using any regular junit tool. A converter script is available in the `bin` directory generating a dynamic HTML report.
+After the test, the report must be converted from native `xml` format using any regular junit tool. Instead of looking for an available tool, I asked ChatGPT to create a simple script that converts the report to a dynamic HTML report.
+
+A converter script is available in the `bin` directory generating a dynamic HTML report.
 
 [source,bash]
 ----
@@ -566,7 +568,7 @@ verify_junit=$(ls -t molecule/junit/reports/verify*.xml | head -n 1)
 bin/convert_junit_report.sh $verify_junit
 ----
 
-You can view the generated HTML report for the latest test run here: link:https://rstyczynski.github.io/ansible-collection-howto/verify_report.html[JUnit HTML Report]
+Exemplary test report is available here: link:https://rstyczynski.github.io/ansible-collection-howto/verify_report.html[JUnit HTML Report]
 
 
 <<<

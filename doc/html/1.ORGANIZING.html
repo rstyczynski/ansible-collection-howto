@@ -5,8 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="Ryszard Styczynski">
-<title>Testing with Molecule</title>
+<meta name="author" content="Ryszard Styczynski, v0.1 DRAFT, 2025-09-16">
+<title>Organizing and Distributing Ansible Code Using Collections</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -439,110 +439,72 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
              .nav-footer{text-align: center; margin-top: auto;}
              .nav-footer > p > a {white-space: nowrap;}</style>
 </head>
-<body id="V.The_converge_play" class="article">
+<body id="1.ORGANIZING" class="article">
 <div id="header">
-<h1>Testing with Molecule</h1>
+<h1>Organizing and Distributing Ansible Code Using Collections</h1>
 <div class="details">
 <span id="author" class="author">Ryszard Styczynski</span><br>
 <span id="revnumber">version 0.1,</span>
-<span id="revdate">2025-09-22</span>
+<span id="revdate">2025-09-16</span>
 <br><span id="revremark">DRAFT</span>
 </div>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="V.The_converge_play">5. Writing the converge play</h2>
+<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The converge play is a regular playbook, and you will specify in the <code>molecule.yml</code> a reference to your playbook when it&#8217;s a test target.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># molecule.yml (fragment)
-provisioner:
-  name: ansible
-  playbooks:
-    converge: ../../apache1_debian.yml</code></pre>
-</div>
+<p>Ansible is a very rich framework with many flavors and usage patterns. While it can be applied in different ways, the technology is built on several pillars that should guide its use. Among these, one is particularly important for complex organizations: the Ansible Collection.</p>
 </div>
 <div class="paragraph">
-<p>If you prefer to write your own play, create a <code>converge.yml</code> file in the test scenario directory. Example of such configuration is provided in the <code>apache4_with_role</code> test scenario.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># converge.yml
----
-- name: Install Apache on RedHat and Debian systems (role)
-  hosts: webservers
-  become: true
-  roles:
-    - apache</code></pre>
-</div>
+<p>Collections provide a foundational element for Ansible code management, enabling separation of concerns, controlled distribution, and versioning. This makes them essential for scaling practices, maintaining consistency, and ensuring traceability across teams and environments.</p>
 </div>
 <div class="paragraph">
-<p>Notice that in case of writing a <code>converge.yml</code> play you need to take care of roles to be available for Ansible. One technique to configure the right directory is to set ENV in the <code>provisioner</code> stage configuration. <code>MOLECULE_PROJECT_DIRECTORY</code> contains the path level for the tested component. In case of playbooks, it&#8217;s the repo root directory; it will be a little different for role components.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># molecule.yml (fragment)
-provisioner:
-  name: ansible
-  env:
-    ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}/roles"</code></pre>
-</div>
+<p>Ansible Collections are a distribution format for Ansible content, including roles, modules, plugins, test code, and documentation. They make it easy to package, share, and reuse automation across projects and teams.</p>
 </div>
 <div class="paragraph">
-<p>For clarity, I&#8217;ll show the <code>converge.yml</code> for a play using collections. It&#8217;s the same as a role with a change in fully qualified role name, which now is explicitly taken from the <code>myorg.unix</code> namespace.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># converge.yml
----
-- name: Install Apache on RedHat and Debian systems (collection)
-  hosts: webservers
-  become: true
-  roles:
-    - myorg.unix.apache</code></pre>
-</div>
+<p>This introduction shows how to create collections, maintain them in local directories or private GitHub repositories, and use them in playbooks.</p>
 </div>
 <div class="paragraph">
-<p>Notice <code>requirements.yml</code> in the test scenario directory. This file is processed by the <code>dependency</code> stage to install all required collections.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># requirements.yml
----
-collections:
-  - name: collections/ansible_collections/myorg/unix/
-    type: dir</code></pre>
-</div>
+<p>As most major Ansible Collections are public and distributed via Ansible Galaxy servers—which is often a problem in enterprise environments—this guide demonstrates how to install them from local sources e.g. local directories or repositories. This approach avoids reliance on public sources and ensures full control over external dependencies.</p>
 </div>
 <div class="paragraph">
-<p>The dependency stage is configured to use the <code>requirements.yml</code> file by the <code>molecule.yml</code> directive.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml"># molecule.yml (fragment)
-dependency:
-  name: galaxy
-  options:
-    requirements-file: requirements.yml</code></pre>
-</div>
+<p>The material takes you from a classic playbook, through an Ansible Role, and finally to an Ansible Collection, concluding with the interface specification for Ansible Roles. The next step in the learning path will cover testing and Ansible fact persistence.</p>
 </div>
 <div class="paragraph">
-<p>At this stage, you understand how to prepare Molecule tests for a standalone play, play with role, and a play using a collection executing in a Podman-controlled environment. Let&#8217;s take a closer look at the assertion play.</p>
+<p>This story is supported by code available at the <code><a href="https://github.com/rstyczynski/ansible-collection-howto" class="bare">https://github.com/rstyczynski/ansible-collection-howto</a></code> repository The <code>apache*</code> playbooks take you through the steps towards building an Ansible Collection and using Molecule for testing. The <code>duck*</code> set is a recap that includes argument specification, and the <code>state*</code> set of plays introduces fact persistence.</p>
 </div>
-<div style="page-break-after: always;"></div>
 </div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="Contents.html">Contents</a></p>
+</li>
+<li>
+<p><a href="I.Playbook.html">1. The Classic Playbook</a></p>
+</li>
+<li>
+<p><a href="II.Role.html">2. Ansible Role</a></p>
+</li>
+<li>
+<p><a href="III.Collection.html">3. Introduction to Ansible Collections</a></p>
+</li>
+<li>
+<p><a href="IV.Argument_specification.html">4. Ansible Role argument specification</a></p>
+</li>
+<li>
+<p><a href="Appendix_References.html">Appendix. References</a></p>
+</li>
+</ul>
 </div>
 <div class="paragraph nav-footer">
-<p>← Previous: <a href="IV.Executing_playbook_test.html">4. Executing playbook test</a> | ↑ Up: <a href="2.TESTING.html">Testing with Molecule</a> | Next: <a href="VI.The_verification_play.html">6. Writing the verification play</a> →</p>
+<p>Next: <a href="Contents.html">Contents</a> →</p>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 0.1<br>
-Last updated 2025-09-22 23:04:57 +0200
+Last updated 2025-09-22 16:20:05 +0200
 </div>
 </div>
 </body>
