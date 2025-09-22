@@ -560,7 +560,7 @@ molecule test -s junit
 
 After the test, the report must be converted from native `xml` format using any regular junit tool. Instead of looking for an available tool, I asked ChatGPT to create a simple script that converts the report to a dynamic HTML report.
 
-A converter script is available in the `bin` directory generating a dynamic HTML report.
+A converter script is available in the `bin` directory generating a dynamic HTML report. Below code processes the latest report.
 
 [source,bash]
 ----
