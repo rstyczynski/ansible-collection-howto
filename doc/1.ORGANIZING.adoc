@@ -10,6 +10,8 @@
 :multipage-level: 1
 :multipage-chunk-filename-pattern: {id}.html
 
+:docinfo: shared,footer
+
 = Organizing and Distributing Ansible Code Using Collections
 {author}, v{revnumber} {revremark}, {revdate}
 
