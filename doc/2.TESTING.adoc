@@ -566,6 +566,11 @@ verify_junit=$(ls -t molecule/junit/reports/verify*.xml | head -n 1)
 bin/convert_junit_report.sh $verify_junit
 ----
 
+You can view the generated HTML report for the latest test run here:
+
+link:../../molecule/junit/reports/verify-1758546358.667728_report.html[JUnit HTML Report]
+
+
 <<<
 [[Appendix.References]]
 == Appendix. References
