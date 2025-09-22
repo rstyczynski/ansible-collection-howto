@@ -10,6 +10,8 @@
 :multipage-level: 1
 :multipage-chunk-filename-pattern: {id}.html
 
+:docinfo: shared,footer
+
 = Testing Ansible Code with Molecule
 {author}, v{revnumber} {revremark}, {revdate}
 
