@@ -509,18 +509,44 @@ Last updated 2025-09-22 23:30:45 +0200
 </div>
 <style>
   /* Heading copy-link button */
+  h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] { position: relative; }
   .copy-link {
-    margin-left: .5rem;
+    position: absolute;
+    left: -1.6em;              /* sit in the left margin without shifting text */
+    top: 50%;
+    transform: translateY(-50%);
     cursor: pointer;
     border: none;
     background: none;
     font: inherit;
+    font-size: 1.1em;          /* slightly larger */
+    opacity: 0;                /* hidden by default */
+    pointer-events: auto;
+    transition: opacity .15s ease;
+    margin: 0;                 /* no layout shift */
+    padding: .15rem;
+    z-index: 1;
   }
+  .copy-link svg { width: 20px; height: 20px; }
+  /* Show the icon when hovering the heading or the icon itself, or when the button is focused for keyboard users */
+  h1[id]:hover .copy-link,
+  h2[id]:hover .copy-link,
+  h3[id]:hover .copy-link,
+  h4[id]:hover .copy-link,
+  h5[id]:hover .copy-link,
+  h6[id]:hover .copy-link,
+  .copy-link:hover,
+  .copy-link:focus,
+  .copy-link:focus-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
   .copy-link[aria-live] { position: relative; }
   .copy-link::after {
     content: attr(data-toast);
     position: absolute;
-    top: -1.75rem;
+    bottom: 120%;
     left: 50%;
     transform: translateX(-50%);
     padding: .15rem .4rem;
@@ -531,27 +557,47 @@ Last updated 2025-09-22 23:30:45 +0200
     opacity: 0;
     pointer-events: none;
     transition: opacity .18s ease;
+    white-space: nowrap;
   }
   .copy-link.show::after { opacity: 1; }
 
   /* Code block copy button */
   .copy-code {
     position: absolute;
-    top: .4rem;
-    right: .4rem;
+    left: -1.6em;              /* sit in the left margin */
+    top: 50%;
+    transform: translateY(-50%);
     cursor: pointer;
     border: none;
     background: none;
-    padding: .2rem;
+    padding: .3rem;
     border-radius: .25rem;
+    opacity: 0;
+    pointer-events: auto;
+    transition: opacity .15s ease;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   .copy-code svg { width: 16px; height: 16px; }
+  .listingblock:hover .copy-code,
+  .listingblock:focus-within .copy-code,
+  .listingblock:hover::before,
+  .listingblock:hover::after,
+  .copy-code:focus,
+  .copy-code:focus-visible,
+  .copy-code:hover {
+    opacity: 1;
+    pointer-events: auto;
+  }
   .copy-code[aria-live] { position: relative; }
   .copy-code::after {
     content: attr(data-toast);
     position: absolute;
-    top: -1.5rem;
-    right: 0;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
     font-size: .75rem;
     padding: .1rem .3rem;
     border-radius: .25rem;
@@ -560,26 +606,73 @@ Last updated 2025-09-22 23:30:45 +0200
     opacity: 0;
     pointer-events: none;
     transition: opacity .18s ease;
+    white-space: nowrap;
+    writing-mode: horizontal-tb !important; /* ensure not vertical */
   }
   .copy-code.show::after { opacity: 1; }
 
   /* Ensure the button positions inside code blocks */
   .listingblock { position: relative; }
 
+  /* Hover buffer on the left margin so the icon stays visible when approaching it */
+  .listingblock::before {
+    content: "";
+    position: absolute;
+    left: -2.2em;   /* slightly wider than icon offset */
+    top: 0;
+    bottom: 0;
+    width: 2.2em;
+  }
+
   /* Move code block language label to bottom-right */
   .listingblock pre.highlight {
     position: relative;
-    padding-bottom: 0.1rem; /* space for label */
+    padding-bottom: 0; /* space for label */
   }
   .listingblock code[data-lang] {
     position: relative;
     display: block;
   }
   .listingblock code[data-lang]::before {
-    top: auto;
-    bottom: .1rem;
-    right: .1rem;
-    left: auto;
+    top: -1.2em;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    writing-mode: horizontal-tb; /* force horizontal label */
+    transform: none !important;  /* cancel any theme rotation */
+    display: inline-block;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity .15s ease;
+  }
+  /* Force horizontal language label across common themes/selectors */
+  .listingblock pre[data-lang]::before,
+  .listingblock pre::before,
+  .listingblock .hljs::before,
+  .listingblock code[class^="language-"]::before,
+  .listingblock pre[class^="language-"]::before {
+    writing-mode: horizontal-tb !important;
+    transform: none !important;
+    display: inline-block !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    top: -1.2em !important;
+    left: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    right: auto !important;
+    position: absolute !important;
+    opacity: 0 !important;
+    transition: opacity .15s ease !important;
+  }
+  .listingblock:hover code[data-lang]::before,
+  .listingblock:hover pre[data-lang]::before,
+  .listingblock:hover pre::before,
+  .listingblock:hover .hljs::before,
+  .listingblock:hover code[class^="language-"]::before,
+  .listingblock:hover pre[class^="language-"]::before {
+    opacity: 1 !important;
   }
 </style>
 
@@ -600,7 +693,7 @@ Last updated 2025-09-22 23:30:45 +0200
       btn.title = 'Copy link to this section';
       btn.setAttribute('aria-label', 'Copy link to this section');
       btn.setAttribute('data-toast', 'Copied!');
-      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.9 12a5 5 0 0 1 5-5h3v2h-3a3 3 0 0 0 0 6h3v2h-3a5 5 0 0 1-5-5zm6.2 1h3.9a3 3 0 0 0 0-6h-3.9V5h3.9a5 5 0 0 1 0 10h-3.9v-2z"/></svg>';
+      btn.innerHTML = '<span aria-hidden="true">🔖</span>';
       btn.addEventListener('click', function () {
         var url = buildPermalink(h.id);
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -637,7 +730,16 @@ Last updated 2025-09-22 23:30:45 +0200
       btn.setAttribute('data-toast', 'Copied!');
       btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
       btn.addEventListener('click', function () {
-        var code = pre.innerText; // get visible text from the code block
+        var codeEl = pre.querySelector('code');
+        var raw = codeEl ? codeEl.textContent : (pre.textContent || pre.innerText);
+        // Normalize to a single line: remove newlines and collapse excess whitespace
+        var code = raw
+          .replace(/\r\n/g, '\n')   // unify line endings
+          .replace(/\u00A0/g, ' ')    // nbsp to normal space
+          .replace(/[ \t]+\n/g, '\n') // trim end-of-line spaces
+          .replace(/\n+/g, ' ')       // join lines with a single space
+          .replace(/[ \t]{2,}/g, ' ') // collapse multiple spaces
+          .trim();
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(code).then(showToast).catch(function () { fallback(code); });
         } else {
