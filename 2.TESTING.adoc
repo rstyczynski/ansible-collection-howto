@@ -33,7 +33,7 @@ Idempotency is checked automatically by Molecule during the `idempotence` phase,
 toc::[]
 
 <<<
-[[I.Preparing the Environment]]
+[[I.Preparing]]
 == 1. Preparing the Environment
 
 To avoid polluting the system Python, all the dependencies are installed in a virtual environment.
@@ -80,7 +80,7 @@ podman info
 ----
 
 <<<
-[[II.Test in the project structure]]
+[[II.Project_structure]]
 == 2. Test in the project structure
 
 Any playbook, role, or collection can include a `molecule/` directory with test scenarios. The `molecule/` directory can also live outside the project, but it is recommended to keep it next to the tested component.
@@ -123,7 +123,7 @@ molecule/
 ----
 
 <<<
-[[III.Apache Playbook test]]
+[[III.Playbook_test]]
 == 3. Apache Playbook test
 
 This repository includes example Apache configuration code that configures and starts the httpd service in three variants: Debian, RedHat, and multi-OS. Looking at the repo you see the `molecule` directory with specific test scenarios and the `default` one; at this stage you are executing such content. Now let's take a look into details.
@@ -218,7 +218,7 @@ Apart from core functional arguments, you spot a few of them like `test_scenario
 ====
 
 <<<
-[[IV.Executing playbook test]]
+[[IV.Executing_playbook_test]]
 == 4. Executing playbook test
 
 Running a test is super simple, and means just invoking molecule with `test` and the name of the test scenario. As the test is Podman-based, it's assumed that the Podman machine is available; in case of errors, verify Podman with `podman info`.
@@ -268,7 +268,7 @@ molecule destroy -s apache1_debian
 ----
 
 <<<
-[[V.Writing the converge play]]
+[[V.The_converge_play]]
 == 5. Writing the converge play
 
 The converge play is a regular playbook, and you will specify in the `molecule.yml` a reference to your playbook when it's a test target.
@@ -344,7 +344,7 @@ dependency:
 At this stage, you understand how to prepare Molecule tests for a standalone play, play with role, and a play using a collection executing in a Podman-controlled environment. Let's take a closer look at the assertion play.
 
 <<<
-[[VI.Writing the verification play]]
+[[VI.The_verification_play]]
 == 6. Writing the verification play
 
 Verification code is a regular playbook that asserts the elements configured by the converge play. The main tool is the `ansible.builtin.assert` module, which evaluates Jinja2 tests and filters against Ansible variables - including facts, registered results, and user-defined variables. Combine assertions with other modules such as `package_facts`, `service_facts`, or `wait_for` (for port checks), etc., to verify that the converge play produced the expected results.
@@ -402,7 +402,7 @@ The verify play is not intended to check idempotency. That aspect is handled by 
 ----
 
 <<<
-[[VII.Molecule test at role level]]
+[[VII.Test_at_role_level]]
 == 7. Molecule test at role level
 
 It's good practice to always keep test code next to the components. In the case of a role, this means placing it in the role's directory.
@@ -443,7 +443,7 @@ molecule test -s apache4_with_role
 ----
 
 <<<
-[[VIII.Molecule test at collection's role level]]
+[[VIII.Test_at_collection_level]]
 == 8. Molecule test at collection's role level
 
 It's good practice to always keep test code next to the components. In the case of a collection's role, this means placing it in the role's directory.
@@ -524,7 +524,7 @@ molecule test - redhat
 ----
 
 <<<
-[[IX.JUnit integration]]
+[[IX.JUnit_integration]]
 == 9. JUnit integration
 
 Molecule supports test reporting through a regular Ansible `ansible.builtin.junit` callback. Configure the callback in `molecule.yml`'s `provisioner` section by setting environment variables. Having this, each task prefixed with `TEST_CASE` will be reported to the junit report file located in the `reports` directory relative to the test home.
@@ -608,7 +608,7 @@ bin/convert_junit_report.sh $verify_junit
 ----
 
 <<<
-[[Appendix. References]]
+[[Appendix.References]]
 == Appendix. References
 
 . Ansible Molecule (Note: use hamburger menu to go to other chapters), https://ansible.readthedocs.io/projects/molecule/ 
