@@ -1,4 +1,4 @@
-:author: Ryszaard Styczynski
+:author: Ryszard Styczynski
 :revnumber: 0.1
 :revremark: DRAFT
 :revdate: 2025-09-16
