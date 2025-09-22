@@ -1,8 +1,15 @@
 ---
+ansible:
+  cfg:
+    defaults:
+      deprecation_warnings: false
+
 dependency:
   name: galaxy
+
 driver:
   name: podman
+
 platforms:
   - name: centos
     image: quay.io/centos/centos:stream9
@@ -29,11 +36,6 @@ provisioner:
   name: ansible
   playbooks:
     converge: ../../apache3_multi_os.yml
-  inventory:
-    host_vars:
-      centos:
-        ansible_user: root
-      ubuntu:
-        ansible_user: root
+
 verifier:
   name: ansible

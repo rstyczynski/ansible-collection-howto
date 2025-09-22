@@ -28,7 +28,14 @@ platforms:
 provisioner:
   name: ansible
   env:
-    ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}/roles"
+    ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}/../../roles"
+
+  inventory:
+    host_vars:
+      centos:
+        ansible_user: root
+      ubuntu:
+        ansible_user: root
         
 verifier:
   name: ansible
