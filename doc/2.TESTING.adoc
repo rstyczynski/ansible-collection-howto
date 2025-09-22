@@ -167,7 +167,7 @@ provisioner:
 
 ----
 
-Notice the Podman driver, as the test will run on a Podman instance. The platforms section describes the infrastructure layer. Debian code is straightforward; however, the apache2_redhat `platforms` section comes with additional complexity due to Podman’s ignoring systemd; additional configurations configure systemd.
+Notice the Podman driver, as the test will run on a Podman instance. The platforms section describes the infrastructure layer. Debian code is straightforward; however, the apache2_redhat `platforms` section comes with additional complexity due to Podman ignoring systemd; additional configurations configure systemd.
 
 The provisioner section contains a link to the converge playbook. Because the goal was to test the playbook directly, it was natural to configure it here rather than in an external file. The inventory section is also defined in the same place. Finally, the verifier section uses Ansible, which points to the `verify.yml` file containing the actual test assertions.
 
@@ -254,7 +254,7 @@ If you prefer to write your own play, create a `converge.yml` file in the test s
     - apache
 ----
 
-Notice that in case of writing a converge.yml play you need to take care of roles to be available for Ansible. One technique to configure the right directory is setting ENV at the `provisioner` stage configuration. `MOLECULE_PROJECT_DIRECTORY` contains the path level for the tested component. In case of playbooks, it's the repo root directory; it will be a little different for role components.
+Notice that in case of writing a `converge.yml` play you need to take care of roles to be available for Ansible. One technique to configure the right directory is to set ENV in the `provisioner` stage configuration. `MOLECULE_PROJECT_DIRECTORY` contains the path level for the tested component. In case of playbooks, it's the repo root directory; it will be a little different for role components.
 
 [source,yaml]
 ----
@@ -265,7 +265,7 @@ provisioner:
     ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}/roles"
 ----
 
-For clarity, I'll show `converge.yml` for a play using collections. It's the same as a role with a change in fully qualified role name, which now is explicitly taken from the `myorg.unix` namespace.
+For clarity, I'll show the `converge.yml` for a play using collections. It's the same as a role with a change in fully qualified role name, which now is explicitly taken from the `myorg.unix` namespace.
 
 [source,yaml]
 ----
@@ -382,7 +382,7 @@ roles/
       main.yml
 ----
 
-The test file layout is identical; everything is the same except for one difference inside `molecule.yml/provisioner/env`, where you configure `ANSIBLE_ROLES_PATH` to point to the repository root where the `roles` directory is located. I will again use `MOLECULE_PROJECT_DIRECTORY`, which conveniently contains the path to the tested component. In the case of a role, this is the role's root directory, which is two levels below the repository root where the `roles` directory resides. This difference is reflected in the configuration, and it is the only change.
+The test file layout is identical; everything is the same except for one difference inside `molecule.yml/provisioner/env`, where you configure `ANSIBLE_ROLES_PATH` to point to the repository root where the `roles` directory is located. I will again use `MOLECULE_PROJECT_DIRECTORY`, which conveniently contains the path to the tested component. In the case of a role, this is the role's root directory, which is two levels below the repository root where the `roles` directory is located. This difference is reflected in the configuration, and it is the only change.
 
 [source,yaml]
 ----
@@ -421,7 +421,7 @@ roles/
      main.yml
 ----
 
-The test file layout is identical; everything is the same. It's not needed to configure any role or collection paths, as Molecule is aware of the collection context and automatically installs the collection in the `dependency` stage. The collection's role `molecule.yml` is super easy. The only complexity we see now is related to the CentOS platform due to systemd default behavior. I kept suppression of deprecation warnings to keep the log clear.
+The test file layout is identical; everything is the same. It is not necessary to configure any role or collection paths, as Molecule is aware of the collection context and automatically installs the collection in the `dependency` stage. The collection's role `molecule.yml` is super easy. The only complexity we see now is related to the CentOS platform due to systemd default behavior. I kept suppression of deprecation warnings to keep the log clear.
 
 [source,yaml]
 ----
@@ -460,7 +460,7 @@ platforms:
 
 You can go to the role's home and invoke the test. This time I will invoke all the tests:
 
-The `default` scenario to test both Debian and RedHat.
+Use the `default` scenario to test both Debian and RedHat.
 
 [source,bash]
 ----
@@ -472,21 +472,21 @@ The Debian alone:
 
 [source,bash]
 ----
-molecule test - debin
+molecule test -s debian
 ----
 
 And the RedHat alone:
 
 [source,bash]
 ----
-molecule test - redhat
+molecule test -s redhat
 ----
 
 <<<
 [[IX.JUnit_integration]]
 == 9. JUnit integration
 
-Molecule supports test reporting through a regular Ansible `ansible.builtin.junit` callback. Configure the callback in `molecule.yml`'s `provisioner` section by setting environment variables. Having this, each task prefixed with `TEST_CASE` will be reported to the junit report file located in the `reports` directory relative to the test home.
+Molecule supports test reporting through a regular Ansible `ansible.builtin.junit` callback. Configure the callback in the `provisioner` section of `molecule.yml` by setting environment variables. Having this, each task prefixed with `TEST_CASE` will be reported to the junit report file located in the `reports` directory relative to the test home.
 
 [source,yaml]
 ----
