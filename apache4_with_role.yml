@@ -1,5 +1,6 @@
 ---
-- hosts: webservers
-  become: yes
+- name: Install Apache on RedHat and Debian systems (role)
+  hosts: webservers
+  become: true
   roles:
     - apache

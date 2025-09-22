@@ -1,0 +1,4 @@
+---
+collections:
+  - name: collections/ansible_collections/myorg/unix/
+    type: dir

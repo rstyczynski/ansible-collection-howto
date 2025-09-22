@@ -1,25 +1,42 @@
 ---
-ansible:
-  cfg:
-    defaults:
-      deprecation_warnings: false
 dependency:
   name: galaxy
+  options:
+    requirements-file: requirements.yml
+
 driver:
   name: podman
+  
 platforms:
+  - name: centos
+    image: quay.io/centos/centos:stream9
+    pre_build_image: false
+    dockerfile: Dockerfile.centos
+    cgroupns_mode: host
+    command: ["/usr/sbin/init"]
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    tmpfs:
+      /run: rw
+      /run/lock: rw
+    env:
+      container: docker
+    groups: [webservers]
+
   - name: ubuntu
     image: ubuntu:22.04
     pre_build_image: false
-    dockerfile: Dockerfile
+    dockerfile: Dockerfile.ubuntu
     groups: [webservers]
+
 provisioner:
   name: ansible
-  playbooks:
-    converge: ../../apache1_debian.yml
+
   inventory:
     host_vars:
       centos:
+        ansible_user: root
+      ubuntu:
         ansible_user: root
 verifier:
   name: ansible

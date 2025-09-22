@@ -1,5 +1,6 @@
 ---
-- hosts: webservers
-  become: yes
+- name: Install Apache on RedHat and Debian systems (collection)
+  hosts: webservers
+  become: true
   roles:
     - myorg.unix.apache

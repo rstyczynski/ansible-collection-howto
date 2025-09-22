@@ -147,7 +147,7 @@ It's important to understand each place in a role hierarchy, however not all of 
 
 === 2.3 Move existing tasks into the Role
 
-Role delivers multiple features, however on this stage we are interested in roles/apache/tasks/main.yml file to move playbook 's core logic to this place.
+Role delivers multiple features, however on this stage we are interested in roles/apache/tasks/main.yml file to move playbook's core logic to this place.
 
 [source,yaml]
 ----
