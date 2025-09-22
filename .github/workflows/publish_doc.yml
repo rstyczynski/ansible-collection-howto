@@ -33,6 +33,14 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Show files to be deployed
+        run: |
+          echo "::group::tree ./doc"
+          ls -lah ./doc
+          echo
+          echo "---- recursive ----"
+          find ./doc -type f | sort
+          echo "::endgroup::"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
