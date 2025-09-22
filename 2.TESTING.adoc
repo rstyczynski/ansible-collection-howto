@@ -32,6 +32,8 @@ Idempotency is checked automatically by Molecule during the `idempotence` phase,
 == Contents
 toc::[]
 
+<<<
+[[I.Preparing the Environment]]
 == 1. Preparing the Environment
 
 To avoid polluting the system Python, all the dependencies are installed in a virtual environment.
@@ -77,6 +79,8 @@ podman machine start
 podman info   
 ----
 
+<<<
+[[II.Test in the project structure]]
 == 2. Test in the project structure
 
 Any playbook, role, or collection can include a `molecule/` directory with test scenarios. The `molecule/` directory can also live outside the project, but it is recommended to keep it next to the tested component.
@@ -118,6 +122,8 @@ molecule/
     verify.yml
 ----
 
+<<<
+[[III.Apache Playbook test]]
 == 3. Apache Playbook test
 
 This repository includes example Apache configuration code that configures and starts the httpd service in three variants: Debian, RedHat, and multi-OS. Looking at the repo you see the `molecule` directory with specific test scenarios and the `default` one; at this stage you are executing such content. Now let's take a look into details.
@@ -211,6 +217,8 @@ The provisioner section contains a link to the converge playbook. Because the go
 Apart from core functional arguments, you spot a few of them like `test_scenario` with commented lines and `deprecation_warnings`. I added them to make Molecule progress console log free of errors, which makes the learning path easier.
 ====
 
+<<<
+[[IV.Executing playbook test]]
 == 4. Executing playbook test
 
 Running a test is super simple, and means just invoking molecule with `test` and the name of the test scenario. As the test is Podman-based, it's assumed that the Podman machine is available; in case of errors, verify Podman with `podman info`.
@@ -259,6 +267,8 @@ Finally, when the test is done, the Podman instance needs to be removed. The des
 molecule destroy -s apache1_debian
 ----
 
+<<<
+[[V.Writing the converge play]]
 == 5. Writing the converge play
 
 The converge play is a regular playbook, and you will specify in the `molecule.yml` a reference to your playbook when it's a test target.
@@ -333,6 +343,8 @@ dependency:
 
 At this stage, you understand how to prepare Molecule tests for a standalone play, play with role, and a play using a collection executing in a Podman-controlled environment. Let's take a closer look at the assertion play.
 
+<<<
+[[VI.Writing the verification play]]
 == 6. Writing the verification play
 
 Verification code is a regular playbook that asserts the elements configured by the converge play. The main tool is the `ansible.builtin.assert` module, which evaluates Jinja2 tests and filters against Ansible variables - including facts, registered results, and user-defined variables. Combine assertions with other modules such as `package_facts`, `service_facts`, or `wait_for` (for port checks), etc., to verify that the converge play produced the expected results.
@@ -389,6 +401,8 @@ The verify play is not intended to check idempotency. That aspect is handled by 
         success_msg: "Port 80 is accessible"
 ----
 
+<<<
+[[VII.Molecule test at role level]]
 == 7. Molecule test at role level
 
 It's good practice to always keep test code next to the components. In the case of a role, this means placing it in the role's directory.
@@ -428,6 +442,8 @@ cd roles/apache
 molecule test -s apache4_with_role
 ----
 
+<<<
+[[VIII.Molecule test at collection's role level]]
 == 8. Molecule test at collection's role level
 
 It's good practice to always keep test code next to the components. In the case of a collection's role, this means placing it in the role's directory.
@@ -507,6 +523,8 @@ And the RedHat alone:
 molecule test - redhat
 ----
 
+<<<
+[[IX.JUnit integration]]
 == 9. JUnit integration
 
 Molecule supports test reporting through a regular Ansible `ansible.builtin.junit` callback. Configure the callback in `molecule.yml`'s `provisioner` section by setting environment variables. Having this, each task prefixed with `TEST_CASE` will be reported to the junit report file located in the `reports` directory relative to the test home.
@@ -589,6 +607,8 @@ verify_junit=$(ls -t molecule/junit/reports/verify*.xml | head -n 1)
 bin/convert_junit_report.sh $verify_junit
 ----
 
+<<<
+[[Appendix. References]]
 == Appendix. References
 
 . Ansible Molecule (Note: use hamburger menu to go to other chapters), https://ansible.readthedocs.io/projects/molecule/ 
