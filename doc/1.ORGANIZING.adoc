@@ -1,7 +1,7 @@
 :author: Ryszard Styczynski
-:revnumber: 0.1
+:revnumber: 0.2
 :revremark: DRAFT
-:revdate: 2025-09-16
+:revdate: 2025-09-23
 
 :toc: macro
 :toc-title: 
@@ -27,7 +27,7 @@ As most major Ansible Collections are public and distributed via Ansible Galaxy 
 
 The material takes you from a classic playbook, through an Ansible Role, and finally to an Ansible Collection, concluding with the interface specification for Ansible Roles. The next step in the learning path will cover testing and Ansible fact persistence.
 
-This story is supported by code available at the `https://github.com/rstyczynski/ansible-collection-howto` repository The `apache*` playbooks take you through the steps towards building an Ansible Collection and using Molecule for testing. The `duck*` set is a recap that includes argument specification, and the `state*` set of plays introduces fact persistence.
+This document is supported by code available at the `https://github.com/rstyczynski/ansible-collection-howto` repository. The `apache*` playbooks take you through the steps towards building an Ansible Collection and using Molecule for testing. The `duck*` set is a recap that includes argument specification, and the `state*` set of plays introduces fact persistence.
 
 [[Contents]]
 == Contents

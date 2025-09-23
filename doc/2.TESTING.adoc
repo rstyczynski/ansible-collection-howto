@@ -1,7 +1,7 @@
 :author: Ryszard Styczynski
 :revnumber: 0.1
 :revremark: DRAFT
-:revdate: 2025-09-22
+:revdate: 2025-09-23
 
 :toc: macro
 :toc-title: 
@@ -30,6 +30,8 @@ Molecule defines a clear pipeline with several phases that guide the testing of 
 ====
 Idempotency is checked automatically by Molecule during the `idempotence` phase, helping to catch unintended changes or side effects in your playbook.
 ====
+
+This document is supported by the `https://github.com/rstyczynski/ansible-collection-howto` repository, where all the code presented here is available for use.
 
 == Contents
 toc::[]
