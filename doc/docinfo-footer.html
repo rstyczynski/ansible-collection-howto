@@ -184,7 +184,7 @@
       btn.title = 'Copy link to this section';
       btn.setAttribute('aria-label', 'Copy link to this section');
       btn.setAttribute('data-toast', 'Copied!');
-      btn.innerHTML = '<span aria-hidden="true">🔖</span>';
+      btn.innerHTML = '<span aria-hidden="true" style="font-size: 0.5em;">🔗</span>';
       btn.addEventListener('click', function () {
         var url = buildPermalink(h.id);
         if (navigator.clipboard && navigator.clipboard.writeText) {
