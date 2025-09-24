@@ -15,7 +15,7 @@
 = Testing Ansible Code with Molecule
 {author}, v{revnumber} {revremark}, {revdate}
 
-Automation without testing is fragile. To guarantee playbooks, roles, and collections behave reliably across different environments, the Ansible ecosystem provides the Molecule testing tool.
+Automation without testing is fragile. To ensure that playbooks, roles, and collections behave reliably across different environments, the Ansible ecosystem provides the Molecule testing tool.
 
 Molecule defines a clear pipeline with several phases that guide the testing of Ansible content:
 
