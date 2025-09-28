@@ -1,5 +1,3 @@
-
-
 ---
 - name: Ensure venv_manager_python variable is defined
   ansible.builtin.assert:
