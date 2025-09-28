@@ -13,11 +13,30 @@
       https://api.duckduckgo.com/?q={{ duckduckgo_query | urlencode }}&format=json&no_html=1&no_redirect=1&skip_disambig=1
     method: GET
     return_content: true
+  check_mode: no
+  changed_when: false
   register: ddg
 
-- name: Normalize JSON payload
-  set_fact:
-    ddg_json: "{{ ddg.json | default(ddg.content | from_json) }}"
+
+- name: Normalize JSON payload from ddg.json when available
+  ansible.builtin.set_fact:
+    ddg_json: "{{ ddg.json }}"
+  when:
+    - ddg is defined
+    - ddg.json is defined
+
+- name: Normalize JSON payload from ddg.content when json is missing
+  ansible.builtin.set_fact:
+    ddg_json: "{{ ddg.content | from_json }}"
+  when:
+    - ddg is defined
+    - ddg.content is defined
+    - ddg_json is not defined
+
+- name: Ensure ddg_json exists (empty)
+  ansible.builtin.set_fact:
+    ddg_json: {}
+  when: ddg_json is not defined
 
 - name: Build final answer (Answer -> AbstractText -> top 3 RelatedTopics)
   set_fact:
