@@ -95,9 +95,15 @@
     - ansible_check_mode
 
 # Show pip list in non-check mode
-- name: Show venv pip list
+- name: Register venv pip list
   ansible.builtin.command:
     cmd: "{{ venv_manager_path }}/bin/pip list --format=columns"
   changed_when: false
   failed_when: false
+  when: not ansible_check_mode
+  register: venv_manager_pip_list
+
+- name: Show venv pip list (line by line)
+  ansible.builtin.debug:
+    msg: "{{ venv_manager_pip_list.stdout.splitlines() }}"
   when: not ansible_check_mode
