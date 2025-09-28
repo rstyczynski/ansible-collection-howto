@@ -1,0 +1,103 @@
+
+
+---
+- name: Ensure venv_manager_python variable is defined
+  ansible.builtin.assert:
+    that:
+      - venv_manager_python is defined
+      - venv_manager_python | length > 0
+    fail_msg: "You must define 'venv_manager_python' (e.g., python3) before running this role."
+
+- name: Verify venv_manager_python executable is available
+  ansible.builtin.command:
+    cmd: "{{ venv_manager_python }} --version"
+  register: venv_manager_python_check
+  changed_when: false
+
+# Ensure the parent directory for venv exists
+- name: Ensure venv parent directory exists
+  ansible.builtin.file:
+    path: "{{ (venv_manager_path | dirname) | default('.', true) }}"
+    state: directory
+    mode: "0755"
+
+# Create venv idempotently (no pip invocation)
+- name: Create venv (idempotent, no pip invocation)
+  ansible.builtin.command:
+    cmd: "{{ venv_manager_python }} -m venv {{ venv_manager_path }}"
+    creates: "{{ venv_manager_path }}/bin/python"
+
+# Probe for existing venv pip
+- name: Check if venv pip3 exists
+  ansible.builtin.stat:
+    path: "{{ venv_manager_path }}/bin/pip3"
+  register: venv_manager_pip3_stat
+
+- name: Check if venv pip exists
+  ansible.builtin.stat:
+    path: "{{ venv_manager_path }}/bin/pip"
+  register: venv_manager_pip_stat
+
+# Bootstrap pip in venv if missing
+- name: Bootstrap pip in venv if missing (ensurepip)
+  ansible.builtin.command:
+    cmd: "{{ venv_manager_path }}/bin/python -m ensurepip --upgrade"
+    creates: "{{ venv_manager_path }}/bin/pip"
+  when:
+    - not ansible_check_mode
+    - not (venv_manager_pip3_stat.stat.exists | default(false) or venv_manager_pip_stat.stat.exists | default(false))
+
+- name: Fallback bootstrap via --upgrade-deps (if ensurepip unavailable)
+  ansible.builtin.command:
+    cmd: "{{ venv_manager_python }} -m venv {{ venv_manager_path }} --upgrade-deps"
+  when:
+    - not ansible_check_mode
+    - not (venv_manager_pip3_stat.stat.exists | default(false) or venv_manager_pip_stat.stat.exists | default(false))
+  changed_when: false
+  failed_when: false
+
+# Upgrade venv pip tooling if requested
+- name: Upgrade venv pip tooling (pip/setuptools/wheel) if requested
+  ansible.builtin.pip:
+    name: "{{ (venv_manager_upgrade_bootstrap | ternary(venv_manager_bootstrap_packages, ['pip'])) }}"
+    state: "{{ (venv_manager_upgrade_bootstrap | ternary('latest', 'present')) }}"
+    virtualenv: "{{ venv_manager_path }}"
+    virtualenv_command: "{{ venv_manager_python }} -m venv"
+  when:
+    - not ansible_check_mode
+
+# Optionally install from requirements file
+- name: Install packages from requirements file (if provided)
+  ansible.builtin.pip:
+    requirements: "{{ venv_manager_requirements_file }}"
+    state: present
+    virtualenv: "{{ venv_manager_path }}"
+    virtualenv_command: "{{ venv_manager_python }} -m venv"
+  when:
+    - venv_manager_requirements_file is not none
+    - not ansible_check_mode
+
+# Install explicit package list
+- name: Install requested packages list
+  ansible.builtin.pip:
+    name: "{{ venv_manager_packages }}"
+    state: present
+    virtualenv: "{{ venv_manager_path }}"
+    virtualenv_command: "{{ venv_manager_python }} -m venv"
+  when:
+    - venv_manager_packages | length > 0
+    - not ansible_check_mode
+
+- name: Note skipped installs in check mode
+  ansible.builtin.debug:
+    msg: "Check mode: skipping package installation tasks because venv pip may not exist yet."
+  when:
+    - ansible_check_mode
+
+# Show pip list in non-check mode
+- name: Show venv pip list
+  ansible.builtin.command:
+    cmd: "{{ venv_manager_path }}/bin/pip list --format=columns"
+  changed_when: false
+  failed_when: false
+  when: not ansible_check_mode

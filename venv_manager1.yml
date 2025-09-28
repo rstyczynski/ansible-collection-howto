@@ -1,0 +1,15 @@
+---
+- name: Prepare venv with specific packages
+  hosts: localhost
+  gather_facts: false
+
+  roles:
+    - role: myorg.toolchain.venv_manager
+      vars:
+        venv_manager_path: "~/.ansible/venv"
+        venv_manager_python: "python3"
+        venv_manager_upgrade_bootstrap: true
+        venv_manager_packages:
+          - "ansible-core==2.19.2"
+          - "jinja2>=3.1,<3.2"
+          - "oci>=2.160"
